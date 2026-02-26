@@ -2,7 +2,7 @@
 
 Backend API for the LawConnect platform's lawyer functionality. This Node.js/Express application handles lawyer registration, authentication, profile management, appointments, chat, reviews, and availability scheduling.
 
-## 🚀 Features
+##  Features
 
 - **Authentication & Authorization**
   - Lawyer registration with verification
@@ -40,13 +40,13 @@ Backend API for the LawConnect platform's lawyer functionality. This Node.js/Exp
   - Lawyer responses
   - Rating statistics
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js (v14 or higher)
 - MongoDB (v4.4 or higher)
 - npm or yarn
 
-## 🛠️ Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -85,7 +85,7 @@ Backend API for the LawConnect platform's lawyer functionality. This Node.js/Exp
    npm start
    ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 lawyer-backend/
@@ -177,7 +177,7 @@ lawyer-backend/
 - `GET /api/availability/slots/:lawyerId` - Get available slots
 - `GET /api/availability/check/:lawyerId` - Check availability
 
-## 🔐 Authentication
+## Authentication
 
 All protected routes require a Bearer token in the Authorization header:
 
@@ -185,7 +185,7 @@ All protected routes require a Bearer token in the Authorization header:
 Authorization: Bearer <your_jwt_token>
 ```
 
-## 📝 Example Requests
+## Example Requests
 
 ### Register a Lawyer
 ```bash
@@ -227,14 +227,14 @@ Content-Type: application/json
 }
 ```
 
-## 🧪 Testing
+## Testing
 
 Run tests (when implemented):
 ```bash
 npm test
 ```
 
-## 🚀 Deployment
+## Deployment
 
 1. Set `NODE_ENV=production` in your environment
 2. Ensure all environment variables are properly configured
@@ -244,7 +244,7 @@ npm test
    pm2 start server.js --name lawconnect-lawyer-backend
    ```
 
-## 📦 Dependencies
+## Dependencies
 
 - **express** - Web framework
 - **mongoose** - MongoDB ODM
@@ -259,7 +259,7 @@ npm test
 - **express-validator** - Input validation
 - **nodemailer** - Email sending
 
-## 🔧 Configuration
+## Configuration
 
 ### MongoDB Connection
 Update `MONGODB_URI` in `.env` with your MongoDB connection string.
@@ -273,18 +273,15 @@ Update `MONGODB_URI` in `.env` with your MongoDB connection string.
 - Token expiration: 7 days (configurable)
 - Store `JWT_SECRET` securely
 
-## 📄 License
+## License
 
 This project is part of the LawConnect platform.
 
-## 👥 Contributors
+## Contributors
+ELLEWELA KANKANAMGE ISHINI UPEKHA ELLEWELA
+AMUVITA GAMAGE ISURI BHAGYA
+KANKANAMGE PURVI CHAMATHMA
+Anpuraj Abiyak Agikshan
+Paripooranan Mekusanathan
+Thulaswini Vimalraj
 
-- Your Team Members
-
-## 📞 Support
-
-For support, please contact the development team.
-
----
-
-**Note**: This is the lawyer backend component. Ensure the client backend and database services are also running for full functionality.
