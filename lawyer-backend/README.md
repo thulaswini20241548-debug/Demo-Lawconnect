@@ -112,6 +112,8 @@ lawyer-backend/
 ├── middleware/          # Custom middleware
 │   ├── authMiddleware.js
 │   └── uploadMiddleware.js
+├──utils
+|   ├──validators.js
 ├── uploads/             # File uploads directory
 ├── .env.example         # Environment variables template
 ├── package.json         # Dependencies
