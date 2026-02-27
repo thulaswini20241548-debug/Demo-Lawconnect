@@ -1,7 +1,7 @@
 const Lawyer = require('../models/Lawyer');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-
+const { validateEmail, validatePhone, validatePassword } = require('../utils/validators');
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
