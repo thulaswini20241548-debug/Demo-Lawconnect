@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | LawConnect</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="container">
+  <nav class="navbar">
+    <div class="logo"><i class="fas fa-gavel"></i> LawConnect</div>
+    <div class="nav-links">
+  
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="booking.html">Find Lawyers</a>
+      <a href="library.html">Library</a>
+      <a href="chatbot.html">AI Chat</a>
+      <a href="messages.html">Messages</a>
+      <a href="login.html" class="btn btn-small btn-secondary auth-link">Sign In</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1 id="welcomeMessage">Welcome back, <span style="color: var(--accent-gold);">Kamal</span> 👋</h1>
+        <div><span class="verified-badge"><i class="fas fa-id-card"></i> Client since <span id="memberSince">2025</span></span></div>
+      </div>
+    </header>
+
+    <!-- Upcoming consultations (dynamic) -->
+    <section style="margin-bottom: 40px;">
+      <h2>Upcoming consultations</h2>
+      <div id="upcomingAppointments" class="card" style="padding: 20px;">
+        <!-- filled by JS -->
+      </div>
+    </section>
+
+    <!-- Earnings summary (dynamic) -->
+    <section style="margin-bottom: 30px;">
+      <div class="grid-3" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="card primary" style="text-align: center;">
+          <i class="fas fa-wallet" style="font-size: 36px; color: var(--accent-gold);"></i>
+          <h3>Total Earnings</h3>
+          <p style="font-size: 28px; font-weight: 700; color: var(--primary-darker);" id="totalEarnings">LKR 0</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <i class="fas fa-calendar-check" style="font-size: 36px; color: var(--accent-gold);"></i>
+          <h3>Appointments</h3>
+          <p style="font-size: 28px; font-weight: 700; color: var(--primary-darker);" id="totalAppointments">0</p>
+        </div>
+        <div class="card" style="text-align: center;">
+          <i class="fas fa-credit-card" style="font-size: 36px; color: var(--accent-gold);"></i>
+          <h3>Paid</h3>
+          <p style="font-size: 28px; font-weight: 700; color: var(--primary-darker);" id="paidAppointments">0</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick actions (static) -->
+    <section>
+      <h2>Quick actions</h2>
+      <div class="grid-3">
+        <div class="card" onclick="location.href='booking.html'" style="cursor: pointer;">
+          <i class="fas fa-search" style="font-size: 36px; color: var(--accent-gold);"></i>
+          <h3>Find a lawyer</h3>
+          <p>Browse verified professionals</p>
+        </div>
+        <div class="card" onclick="location.href='messages.html'" style="cursor: pointer;">
+          <i class="fas fa-comments" style="font-size: 36px; color: var(--accent-gold);"></i>
+          <h3>Messages</h3>
+          <p>Chat with your lawyer</p>
+        </div>
+        <div class="card" onclick="location.href='library.html'" style="cursor: pointer;">
+          <i class="fas fa-book-open" style="font-size: 36px; color: var(--accent-gold);"></i>
+          <h3>Law library</h3>
+          <p>Know your rights</p>
+        </div>
+      </div>
+    </section>
+    <div class="disclaimer">🔒 Your data is encrypted and confidential.</div>
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>LawConnect</h4>
+      <p>Bridging citizens and lawyers in Sri Lanka.</p>
+    </div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      
+      <a href="dashboard.html">Dashboard</a>
+      <a href="booking.html">Find a Lawyer</a>
+      <a href="library.html">Law Library</a>
+      <a href="messages.html">Messages</a>
+    </div>
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p><i class="fas fa-envelope"></i> support@lawconnect.lk</p>
+      <p><i class="fas fa-phone"></i> +94 77 123 4567</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2025 LawConnect. All rights reserved. | Disclaimers apply.
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+  (function() {
+    const user = JSON.parse(localStorage.getItem('lawconnect_user') || '{}');
+    const welcomeSpan = document.querySelector('#welcomeMessage span');
+    if (user.name && welcomeSpan) {
+      welcomeSpan.innerText = user.name;
+    }
+
+    const memberSinceSpan = document.getElementById('memberSince');
+    if (user.createdAt && memberSinceSpan) {
+      memberSinceSpan.innerText = new Date(user.createdAt).getFullYear();
+    }
+
+    const appointments = JSON.parse(localStorage.getItem('lawconnect_appointments')) || [];
+    const clientId = user.id;
+    const clientAppointments = appointments.filter(a => a.clientId === clientId);
+    const upcoming = clientAppointments.filter(a => new Date(a.datetime) > new Date()).slice(0, 3);
+
+    const upcomingDiv = document.getElementById('upcomingAppointments');
+    if (upcoming.length === 0) {
+      upcomingDiv.innerHTML = '<p style="text-align: center;">You have no upcoming appointments. <a href="booking.html">Book one now</a>.</p>';
+    } else {
+      let html = '';
+      upcoming.forEach(apt => {
+        html += `
+          <div style="border-bottom:1px solid var(--border-light); padding:12px 0; display:flex; justify-content:space-between;">
+            <div><strong>${apt.lawyerName}</strong> – ${apt.datetime}</div>
+            <span class="badge" style="background:${apt.paymentStatus==='paid'?'#d1fae5':'#fff0cf'}">${apt.paymentStatus}</span>
+          </div>
+        `;
+      });
+      upcomingDiv.innerHTML = html;
+    }
+
+    const totalEarnings = clientAppointments.reduce((sum, a) => sum + a.fee, 0);
+    const totalAppointments = clientAppointments.length;
+    const paidAppointments = clientAppointments.filter(a => a.paymentStatus === 'paid').length;
+
+    document.getElementById('totalEarnings').innerText = `LKR ${totalEarnings}`;
+    document.getElementById('totalAppointments').innerText = totalAppointments;
+    document.getElementById('paidAppointments').innerText = paidAppointments;
+  })();
+</script>
+</body>
+</html>

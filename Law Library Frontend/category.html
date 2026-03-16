@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Category - LawConnect Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="library.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="brand" href="library.html">
+          <span class="brand-icon"><i class="fa-solid fa-gavel"></i></span>
+          <span>Law<span>Connect</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="library.html" class="active">Library Home</a>
+          <a href="index.html">Website Home</a>
+          <a href="messages.html">Messages</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="btn btn-secondary" href="library.html">Back to Library</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-header">
+        <div class="container">
+          <div class="breadcrumbs">
+            <a href="library.html">Library</a>
+            <i class="fa-solid fa-angle-right"></i>
+            <span id="categoryCrumb">Category</span>
+          </div>
+          <div class="hero-lite">
+            <span class="eyebrow"><i class="fa-solid fa-folder-open"></i> Category page</span>
+            <h1 id="categoryName">Category</h1>
+            <p id="categoryIntro"></p>
+            <div class="quick-list">
+              <div class="summary-card">
+                <h3>Quick points</h3>
+                <ul id="quickPoints"></ul>
+              </div>
+              <div class="summary-card">
+                <h3>How to use this page</h3>
+                <ul>
+                  <li>Read article summaries first.</li>
+                  <li>Open the full article page for detailed guidance.</li>
+                  <li>Use the official sources shown on each article page.</li>
+                </ul>
+              </div>
+              <div class="summary-card">
+                <h3>Important reminder</h3>
+                <ul>
+                  <li>This page teaches basics.</li>
+                  <li>It does not replace personal legal advice.</li>
+                  <li>Urgent and complex situations need a lawyer.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Articles in this <span>category</span><span class="badge-count" id="articleCount"></span></h2>
+            <a class="btn btn-primary" href="library.html">Open all categories</a>
+          </div>
+          <div class="card-grid articles-grid" id="articleGrid"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-card">
+        <div>
+          <a class="brand" href="library.html">
+            <span class="brand-icon"><i class="fa-solid fa-gavel"></i></span>
+            <span>Law<span>Connect</span></span>
+          </a>
+          <p>Category pages help users focus on one legal topic at a time instead of seeing the same repeated cards.</p>
+        </div>
+        <div>
+          <h4>Go next</h4>
+          <ul>
+            <li><a href="library.html">All categories</a></li>
+            <li><a href="article.html?id=criminal-arrest-rights">Arrest rights</a></li>
+            <li><a href="article.html?id=employment-termination-basics">Termination basics</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Project note</h4>
+          <p>This structure is better for a real law library because each topic now opens into its own learning path.</p>
+        </div>
+        <div>
+          <h4>Safety</h4>
+          <p>For urgent harm, arrest, violence, or deadlines, seek professional help quickly.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="library-data.js"></script>
+  <script src="category.js"></script>
+</body>
+</html>

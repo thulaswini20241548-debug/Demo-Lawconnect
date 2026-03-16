@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article - LawConnect Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="library.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="container topbar-inner">
+        <a class="brand" href="library.html">
+          <span class="brand-icon"><i class="fa-solid fa-gavel"></i></span>
+          <span>Law<span>Connect</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="library.html" class="active">Library Home</a>
+          <a href="category.html?category=family">Categories</a>
+          <a href="index.html">Website Home</a>
+        </nav>
+        <div class="nav-actions">
+          <a class="btn btn-secondary" id="backToCategory" href="library.html">Back</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-header">
+      <div class="container">
+        <div class="breadcrumbs">
+          <a href="library.html">Library</a>
+          <i class="fa-solid fa-angle-right"></i>
+          <a id="crumbCategory" href="library.html">Category</a>
+          <i class="fa-solid fa-angle-right"></i>
+          <span id="crumbArticle">Article</span>
+        </div>
+      </div>
+
+      <div class="container article-layout">
+        <section class="article-main">
+          <article class="article-panel">
+            <span class="article-tag" id="categoryTag">Category</span>
+            <h1 id="articleTitle">Article title</h1>
+            <p id="articleSummary" class="helper-text"></p>
+            <div class="meta-row" id="metaRow"></div>
+
+            <div class="content-block">
+              <h2>Plain-language explanation</h2>
+              <div id="plainLanguage"></div>
+            </div>
+
+
+<div class="content-block hidden" id="guideStepsBlock">
+  <h2>Step-by-step guide</h2>
+  <ol class="steps-list" id="guideSteps"></ol>
+</div>
+
+            <div class="content-block">
+              <h2>What you can do first</h2>
+              <ul id="whatYouCanDo"></ul>
+            </div>
+
+            <div class="content-block">
+              <h2>When to contact a lawyer</h2>
+              <p id="whenToContactLawyer"></p>
+            </div>
+
+            <div class="content-block">
+              <h2>Key takeaway</h2>
+              <div class="disclaimer-box" id="keyTakeaway"></div>
+            </div>
+
+            <div class="article-cta">
+              <a class="btn btn-primary" href="messages.html">Ask AI / continue later</a>
+              <a class="btn btn-secondary" href="lawyer-profile.html">Find a lawyer</a>
+            </div>
+          </article>
+
+          <section class="article-panel">
+            <h2>Official sources used for this article</h2>
+            <p class="helper-text">These are the source links used to manually build this article. They help users and lecturers see that the content is grounded in Sri Lankan legal or government material.</p>
+            <div class="source-list" id="sourceList"></div>
+          </section>
+        </section>
+
+        <aside class="article-sidebar">
+          <div class="sidebar-card">
+            <h3>Important disclaimer</h3>
+            <div class="disclaimer-box">
+              This article is educational only. It is not personal legal advice and it does not replace a qualified lawyer. Facts, documents, timing, and the exact legal framework can change the answer.
+            </div>
+          </div>
+          <div class="sidebar-card">
+            <h3>Related topics</h3>
+            <div class="related-grid" id="relatedGrid"></div>
+          </div>
+          <div class="sidebar-card">
+            <h3>Practical reading tip</h3>
+            <ul>
+              <li>Start with the plain-language explanation.</li>
+              <li>Then check the “what you can do first” list.</li>
+              <li>Use the official source links if you need the original law or agency page.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-card">
+        <div>
+          <a class="brand" href="library.html">
+            <span class="brand-icon"><i class="fa-solid fa-gavel"></i></span>
+            <span>Law<span>Connect</span></span>
+          </a>
+          <p>Separate article pages make the law library feel like a real learning product instead of a single repeating card list.</p>
+        </div>
+        <div>
+          <h4>Quick links</h4>
+          <ul>
+            <li><a href="library.html">Library home</a></li>
+            <li><a id="footerCategoryLink" href="library.html">Current category</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Next step</h4>
+          <p>You can later connect this page to MongoDB and render the same structure from backend data.</p>
+        </div>
+        <div>
+          <h4>Safety</h4>
+          <p>If there is arrest, injury, violence, or a court deadline, speak to a lawyer immediately.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="library-data.js"></script>
+  <script src="article.js"></script>
+</body>
+</html>

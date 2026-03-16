@@ -1,0 +1,67 @@
+[
+  {
+    "slug": "family",
+    "name": "Family Law",
+    "icon": "fa-users",
+    "shortDescription": "Marriage, maintenance, family safety, and child-related legal basics in Sri Lanka.",
+    "introTitle": "Family law made easier to understand",
+    "introText": "This section explains common family-law topics in plain English, including marriage registration, maintenance, and protection from domestic violence. In Sri Lanka, family-law rules can vary depending on the legal framework that applies, so these articles are for general education and should not replace advice from a qualified lawyer.",
+    "quickPoints": [
+      "Marriage and family issues can be governed by different legal frameworks in Sri Lanka.",
+      "Maintenance and protection orders are court-based remedies.",
+      "For urgent safety issues, contact the police or a lawyer immediately."
+    ]
+  },
+  {
+    "slug": "property",
+    "name": "Property Rights",
+    "icon": "fa-house",
+    "shortDescription": "Renting, eviction, landlord-tenant basics, and practical steps for housing disputes.",
+    "introTitle": "Property and rental rights for everyday users",
+    "introText": "This category focuses on practical housing and rental issues that many people face, especially tenants and small landlords. The articles are written to help users understand the Rent Act context, notice issues, and the importance of written records and receipts.",
+    "quickPoints": [
+      "Keep receipts, agreements, and messages about rent.",
+      "Do not leave a property in panic without understanding your options.",
+      "Serious eviction or ownership disputes should be handled with legal advice."
+    ]
+  },
+  {
+    "slug": "employment",
+    "name": "Employment Law",
+    "icon": "fa-briefcase",
+    "shortDescription": "Salary, leave, maternity rights, EPF, and termination-related basics for workers.",
+    "introTitle": "Know the basics of workplace rights",
+    "introText": "These articles summarize common Sri Lankan employment-law topics using official labour sources. They cover wages, leave, maternity benefits, termination, and EPF in a simple format suitable for first-time users.",
+    "quickPoints": [
+      "The Department of Labour provides official guidance on leave, maternity, and termination.",
+      "Keep salary slips, appointment letters, and written messages from your employer.",
+      "For urgent termination disputes, act quickly and get advice early."
+    ]
+  },
+  {
+    "slug": "consumer",
+    "name": "Consumer Protection",
+    "icon": "fa-shield-halved",
+    "shortDescription": "Defective goods, complaints, online scams, receipts, and safe next steps.",
+    "introTitle": "Safer choices for buyers and service users",
+    "introText": "This section explains what to do when you buy defective goods, face unfair treatment in the marketplace, or become a victim of online fraud. It highlights official complaint channels and evidence you should keep.",
+    "quickPoints": [
+      "Always keep receipts, invoices, screenshots, and warranty details.",
+      "The Consumer Affairs Authority can receive complaints on goods and services.",
+      "Online scam losses should be reported quickly to your bank and the police."
+    ]
+  },
+  {
+    "slug": "criminal",
+    "name": "Criminal Law",
+    "icon": "fa-gavel",
+    "shortDescription": "Arrest rights, police complaints, bail basics, and getting legal help early.",
+    "introTitle": "Basic criminal-law guidance for citizens",
+    "introText": "This category explains some of the most important first-step rights and procedures citizens should know in criminal-law situations. It is especially useful when someone is arrested, when a complaint must be filed, or when fast access to legal aid matters.",
+    "quickPoints": [
+      "Article 13 of the Constitution protects against arbitrary arrest and supports due process.",
+      "Complainants can request extracts of complaints from the police under the legal process.",
+      "For arrest, bail, or investigation issues, legal advice should be sought immediately."
+    ]
+  }
+]
