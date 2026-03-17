@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Connect – Messages</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d; --white: #fafafa; --purple: #D4A80C; --purple-mid: #F5C518;
+    --purple-light: #ffe080; --purple-pale: #FDF3C0; --grey: #6b7280; --border: #e8e3d0;
+    --success: #22c55e; --danger: #ef4444;
+    --chat-bg: #f5f3eb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #faf8f0; color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; height: 100vh; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 68px;
+    background: rgba(250,250,250,0.97); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--purple); text-decoration: none; }
+  .nav-logo span { color: var(--ink); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--grey); font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--purple); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--purple); color: #0d0d0d; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; cursor: pointer; flex-shrink: 0; }
+
+  /* MAIN LAYOUT — fills remaining height */
+  .chat-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 68px);
+  }
+
+  /* ── LEFT SIDEBAR (conversation list) ── */
+  .conv-sidebar {
+    width: 320px; flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .conv-sidebar-header {
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .conv-sidebar-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 900;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .unread-total {
+    background: var(--purple); color: #0d0d0d;
+    font-size: 0.72rem; font-weight: 700;
+    padding: 0.15rem 0.55rem; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .search-box {
+    display: flex; align-items: center; gap: 0.5rem;
+    background: var(--chat-bg); border: 1.5px solid var(--border);
+    border-radius: 9px; padding: 0.55rem 0.9rem;
+  }
+  .search-box input {
+    border: none; outline: none; background: transparent;
+    font-size: 0.875rem; font-family: 'DM Sans', sans-serif;
+    width: 100%; color: var(--ink);
+  }
+  .search-icon { color: var(--grey); font-size: 0.9rem; flex-shrink: 0; }
+
+  /* Conversation list */
+  .conv-list { flex: 1; overflow-y: auto; }
+  .conv-item {
+    display: flex; align-items: center; gap: 0.85rem;
+    padding: 1rem 1.5rem; cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+    position: relative;
+  }
+  .conv-item:hover { background: var(--purple-pale); }
+  .conv-item.active { background: var(--purple-pale); border-left: 3px solid var(--purple); }
+  .conv-item.unread .conv-name { font-weight: 700; }
+  .conv-item.unread .conv-preview { color: var(--ink); font-weight: 500; }
+  .conv-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--purple-pale); color: #9B7A00;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+    border: 2px solid var(--border);
+  }
+  .conv-avatar.online { border-color: var(--success); }
+  .conv-body { flex: 1; min-width: 0; }
+  .conv-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conv-preview { font-size: 0.78rem; color: var(--grey); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conv-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; flex-shrink: 0; }
+  .conv-time { font-size: 0.72rem; color: var(--grey); }
+  .conv-badge {
+    background: var(--purple); color: #0d0d0d;
+    font-size: 0.68rem; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Empty conv state */
+  .conv-empty {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem; text-align: center; color: var(--grey);
+  }
+  .conv-empty .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .conv-empty p { font-size: 0.875rem; line-height: 1.6; }
+
+  /* ── RIGHT PANEL (active chat) ── */
+  .chat-panel {
+    flex: 1; display: flex; flex-direction: column;
+    overflow: hidden; background: var(--chat-bg);
+  }
+
+  /* Chat header */
+  .chat-header {
+    padding: 1rem 1.5rem;
+    background: var(--white); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 1rem;
+    flex-shrink: 0;
+  }
+  .chat-header-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--purple-pale); color: #9B7A00;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .chat-header-info { flex: 1; }
+  .chat-header-name { font-weight: 700; font-size: 0.95rem; }
+  .chat-header-sub { font-size: 0.78rem; color: var(--grey); margin-top: 0.1rem; }
+  .chat-header-actions { display: flex; gap: 0.5rem; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1rem; transition: all .2s; color: var(--grey);
+  }
+  .icon-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-pale); }
+
+  /* Messages area */
+  .messages-area {
+    flex: 1; overflow-y: auto;
+    padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
+    scroll-behavior: smooth;
+  }
+
+  /* Date divider */
+  .date-divider {
+    text-align: center; font-size: 0.72rem;
+    color: var(--grey); font-weight: 600;
+    display: flex; align-items: center; gap: 0.75rem;
+    margin: 0.5rem 0;
+  }
+  .date-divider::before, .date-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* Message bubbles */
+  .msg-row { display: flex; gap: 0.6rem; align-items: flex-end; }
+  .msg-row.sent { flex-direction: row-reverse; }
+
+  .msg-avatar-small {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--purple-pale); color: #9B7A00;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; flex-shrink: 0;
+    margin-bottom: 0.1rem;
+  }
+  .msg-avatar-small.lawyer-av { background: var(--purple); color: #0d0d0d; }
+
+  .msg-bubble {
+    max-width: 65%; padding: 0.65rem 1rem;
+    border-radius: 16px; font-size: 0.875rem;
+    line-height: 1.55; position: relative;
+    word-break: break-word;
+  }
+  .msg-row:not(.sent) .msg-bubble {
+    background: var(--white); border: 1.5px solid var(--border);
+    border-bottom-left-radius: 4px; color: var(--ink);
+  }
+  .msg-row.sent .msg-bubble {
+    background: var(--purple); color: #0d0d0d;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-time {
+    font-size: 0.65rem; margin-top: 0.3rem;
+    opacity: 0.65; display: block; text-align: right;
+  }
+  .msg-row:not(.sent) .msg-time { text-align: left; color: var(--grey); }
+
+  /* Read receipt */
+  .read-tick { font-size: 0.7rem; color: #5a4000; }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex; gap: 4px; align-items: center;
+    padding: 0.65rem 1rem; background: var(--white);
+    border: 1.5px solid var(--border); border-radius: 16px;
+    border-bottom-left-radius: 4px; width: fit-content;
+  }
+  .typing-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--grey); animation: typingBounce 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  /* Message input area */
+  .chat-input-bar {
+    padding: 1rem 1.5rem;
+    background: var(--white); border-top: 1px solid var(--border);
+    display: flex; align-items: flex-end; gap: 0.75rem;
+    flex-shrink: 0;
+  }
+  .input-wrap {
+    flex: 1; background: var(--chat-bg);
+    border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 0.65rem 1rem; display: flex; align-items: flex-end; gap: 0.5rem;
+    transition: border-color .2s;
+  }
+  .input-wrap:focus-within { border-color: var(--purple); }
+  #msgInput {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 0.9rem; font-family: 'DM Sans', sans-serif;
+    resize: none; max-height: 120px; line-height: 1.5;
+    color: var(--ink);
+  }
+  .attach-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 1.1rem; color: var(--grey); padding: 0;
+    transition: color .2s; flex-shrink: 0;
+  }
+  .attach-btn:hover { color: var(--purple); }
+  #fileInput { display: none; }
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--purple); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.1rem; flex-shrink: 0;
+    transition: background .2s, transform .15s;
+  }
+  .send-btn:hover { background: var(--purple-mid); transform: scale(1.05); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* No chat selected state */
+  .no-chat-selected {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: var(--grey); text-align: center; padding: 2rem;
+  }
+  .no-chat-selected .big-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+  .no-chat-selected h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--ink); }
+  .no-chat-selected p { font-size: 0.875rem; line-height: 1.6; max-width: 300px; }
+
+  /* File message bubble */
+  .file-bubble {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0,0,0,.06); border-radius: 8px;
+    margin-top: 0.35rem; text-decoration: none;
+    color: inherit; font-size: 0.82rem;
+  }
+  .msg-row.sent .file-bubble { background: rgba(0,0,0,.15); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--ink); color: var(--white);
+    padding: 0.75rem 1.25rem; border-radius: 10px;
+    font-size: 0.875rem; font-weight: 500; z-index: 999;
+    transform: translateY(80px); opacity: 0; transition: all .3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Scrollbar styling */
+  .messages-area::-webkit-scrollbar,
+  .conv-list::-webkit-scrollbar { width: 5px; }
+  .messages-area::-webkit-scrollbar-track,
+  .conv-list::-webkit-scrollbar-track { background: transparent; }
+  .messages-area::-webkit-scrollbar-thumb,
+  .conv-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  @media (max-width: 768px) {
+    .conv-sidebar { width: 100%; position: absolute; z-index: 10; height: 100%; }
+    .conv-sidebar.hidden { display: none; }
+    .chat-panel.hidden { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="lawyer-home.html">Law<span>Connect</span></a>
+  <div class="nav-links">
+    <a href="lawyer-home.html">Home</a>
+    <a href="lawyer-dashboard.html">Dashboard</a>
+    <a href="lawyer-appointments.html">Appointments</a>
+    <a href="lawyer-profile.html">Profile</a>
+    <a href="messages.html" class="active">Messages</a>
+  </div>
+  <div class="avatar" id="navAvatar">–</div>
+</nav>
+
+<!-- CHAT LAYOUT -->
+<div class="chat-layout">
+
+  <!-- LEFT: Conversation list -->
+  <div class="conv-sidebar" id="convSidebar">
+    <div class="conv-sidebar-header">
+      <div class="conv-sidebar-title">
+        Messages
+        <span class="unread-total" id="unreadTotal" style="display:none;">0</span>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search conversations…" id="searchConv" oninput="filterConvs()">
+      </div>
+    </div>
+    <div class="conv-list" id="convList">
+      <div class="conv-empty">
+        <div class="icon">⏳</div>
+        <p>Loading conversations…</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Active chat -->
+  <div class="chat-panel" id="chatPanel">
+
+    <!-- No chat selected -->
+    <div class="no-chat-selected" id="noChatSelected">
+      <div class="big-icon">💬</div>
+      <h3>Your Messages</h3>
+      <p>Select a conversation on the left to view your messages with clients.</p>
+    </div>
+
+    <!-- Active chat view (hidden until a chat is selected) -->
+    <div id="activeChatView" style="display:none; flex-direction:column; height:100%;">
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <div class="chat-header-avatar" id="chatHeaderAvatar">?</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chatHeaderName">—</div>
+          <div class="chat-header-sub" id="chatHeaderSub">—</div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="icon-btn" title="Mark as read" onclick="markRead()">✅</button>
+          <button class="icon-btn" title="Close chat" onclick="closeChat()">🗃️</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-area" id="messagesArea"></div>
+
+      <!-- Input bar -->
+      <div class="chat-input-bar">
+        <div class="input-wrap">
+          <textarea
+            id="msgInput"
+            placeholder="Type a message…"
+            rows="1"
+            onkeydown="handleKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">📎</button>
+          <input type="file" id="fileInput" onchange="sendFile(this)">
+        </div>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">➤</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="api-config.js"></script>
+<script>
+// ── Auth guard ──
+if (!localStorage.getItem('lawconnect_token')) {
+  window.location.href = 'login.html';
+}
+
+// ── State ──
+let allChats       = [];
+let activeChatId   = null;
+let activeChatData = null;
+let lawyerInitials = '?';
+let pollingTimer   = null;
+
+// ── Helpers ──
+function initials(first, last) {
+  return ((first || '')[0] + (last || '')[0]).toUpperCase() || '?';
+}
+function fmtTime(d) {
+  if (!d) return '';
+  const date = new Date(d);
+  const now  = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  if (isToday) return date.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleDateString('en-LK', { day: 'numeric', month: 'short' });
+}
+function fmtFull(d) {
+  if (!d) return '';
+  return new Date(d).toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
+}
+function fmtDateLabel(d) {
+  const date = new Date(d);
+  const now  = new Date();
+  const diff = Math.floor((now - date) / 86400000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return date.toLocaleDateString('en-LK', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = (isError ? '❌ ' : '✅ ') + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function scrollToBottom() {
+  const area = document.getElementById('messagesArea');
+  area.scrollTop = area.scrollHeight;
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ── Load profile ──
+async function loadProfile() {
+  try {
+    const { lawyer } = await API.auth.getMe();
+    lawyerInitials = initials(lawyer.firstName, lawyer.lastName);
+    document.getElementById('navAvatar').textContent = lawyerInitials;
+  } catch (e) { /* silent */ }
+}
+
+// ── Load all conversations ──
+async function loadChats() {
+  try {
+    const res  = await fetch(`${API_BASE_URL}/chat`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('lawconnect_token')}` }
+    });
+    const data = await res.json();
+    allChats = data.chats || [];
+    renderConvList(allChats);
+    updateUnreadBadge();
+  } catch (e) {
+    document.getElementById('convList').innerHTML = `
+      <div class="conv-empty">
+        <div class="icon">📭</div>
+        <p>No conversations yet.<br>Clients will appear here once they message you.</p>
+      </div>`;
+  }
+}
+
+function updateUnreadBadge() {
+  const total = allChats.reduce((sum, c) => sum + (c.unreadCount?.lawyer || 0), 0);
+  const badge = document.getElementById('unreadTotal');
+  if (total > 0) { badge.textContent = total; badge.style.display = 'inline-flex'; }
+  else           { badge.style.display = 'none'; }
+}
+
+// ── Render conversation list ──
+function renderConvList(chats) {
+  const list = document.getElementById('convList');
+  if (chats.length === 0) {
+    list.innerHTML = `
+      <div class="conv-empty">
+        <div class="icon">📭</div>
+        <p>No conversations yet.<br>Clients will appear here once they message you.</p>
+      </div>`;
+    return;
+  }
+  list.innerHTML = chats.map(chat => {
+    const client   = chat.client || {};
+    const ini      = initials(client.firstName, client.lastName);
+    const name     = `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Client';
+    const lastMsg  = chat.messages?.[chat.messages.length - 1];
+    const preview  = lastMsg ? lastMsg.message : 'No messages yet';
+    const time     = fmtTime(chat.lastMessageAt);
+    const unread   = chat.unreadCount?.lawyer || 0;
+    const isActive = chat._id === activeChatId ? 'active' : '';
+    const isUnread = unread > 0 ? 'unread' : '';
+    return `
+      <div class="conv-item ${isActive} ${isUnread}" onclick="openChat('${chat._id}')" data-name="${name.toLowerCase()}">
+        <div class="conv-avatar">${ini}</div>
+        <div class="conv-body">
+          <div class="conv-name">${name}</div>
+          <div class="conv-preview">${preview.length > 45 ? preview.slice(0,45)+'…' : preview}</div>
+        </div>
+        <div class="conv-meta">
+          <div class="conv-time">${time}</div>
+          ${unread > 0 ? `<div class="conv-badge">${unread}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Filter conversations by search ──
+function filterConvs() {
+  const q = document.getElementById('searchConv').value.toLowerCase();
+  const items = document.querySelectorAll('.conv-item');
+  items.forEach(item => {
+    item.style.display = item.dataset.name.includes(q) ? 'flex' : 'none';
+  });
+}
+
+// ── Open a chat ──
+async function openChat(chatId) {
+  activeChatId = chatId;
+  activeChatData = allChats.find(c => c._id === chatId);
+
+  // Update sidebar active state
+  document.querySelectorAll('.conv-item').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.conv-item[onclick="openChat('${chatId}')"]`)?.classList.add('active');
+
+  // Show chat panel
+  document.getElementById('noChatSelected').style.display = 'none';
+  const view = document.getElementById('activeChatView');
+  view.style.display = 'flex';
+
+  // Set header
+  const client = activeChatData?.client || {};
+  const name   = `${client.firstName || ''} ${client.lastName || ''}`.trim() || 'Client';
+  const ini    = initials(client.firstName, client.lastName);
+  document.getElementById('chatHeaderAvatar').textContent = ini;
+  document.getElementById('chatHeaderName').textContent   = name;
+  document.getElementById('chatHeaderSub').textContent    = 'Client';
+
+  // Load messages
+  await loadMessages(chatId);
+
+  // Mark as read
+  await markRead(chatId);
+
+  // Start polling for new messages
+  startPolling(chatId);
+}
+
+// ── Load messages for active chat ──
+async function loadMessages(chatId) {
+  try {
+    const res  = await fetch(`${API_BASE_URL}/chat/${chatId}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('lawconnect_token')}` }
+    });
+    const data = await res.json();
+    const chat = data.chat;
+    if (!chat) return;
+
+    // Update local cache
+    const idx = allChats.findIndex(c => c._id === chatId);
+    if (idx !== -1) allChats[idx] = chat;
+
+    renderMessages(chat.messages || []);
+  } catch (e) {
+    document.getElementById('messagesArea').innerHTML =
+      '<div style="text-align:center;color:var(--grey);padding:2rem;font-size:.875rem;">Could not load messages.</div>';
+  }
+}
+
+// ── Render messages ──
+function renderMessages(messages) {
+  const area   = document.getElementById('messagesArea');
+  const myId   = JSON.parse(localStorage.getItem('lawconnect_user') || '{}')._id;
+
+  if (messages.length === 0) {
+    area.innerHTML = `
+      <div style="text-align:center;color:var(--grey);padding:3rem 1rem;">
+        <div style="font-size:2.5rem;margin-bottom:.75rem;">👋</div>
+        <p style="font-size:.875rem;">No messages yet. Say hello!</p>
+      </div>`;
+    return;
+  }
+
+  let html = '';
+  let lastDateLabel = '';
+
+  messages.forEach(msg => {
+    const dateLabel = fmtDateLabel(msg.createdAt);
+    if (dateLabel !== lastDateLabel) {
+      html += `<div class="date-divider">${dateLabel}</div>`;
+      lastDateLabel = dateLabel;
+    }
+
+    const isSent = msg.senderModel === 'Lawyer';
+    const rowClass = isSent ? 'msg-row sent' : 'msg-row';
+    const avClass  = isSent ? 'msg-avatar-small lawyer-av' : 'msg-avatar-small';
+    const avText   = isSent ? lawyerInitials : initials(activeChatData?.client?.firstName, activeChatData?.client?.lastName);
+    const timeStr  = fmtFull(msg.createdAt);
+    const readTick = isSent ? `<span class="read-tick">${msg.isRead ? '✓✓' : '✓'}</span>` : '';
+
+    let content = '';
+    if (msg.messageType === 'file' || msg.messageType === 'image') {
+      content = `
+        <div class="msg-bubble">
+          <a class="file-bubble" href="${msg.fileUrl || '#'}" target="_blank">
+            📎 ${msg.fileName || 'Attachment'}
+          </a>
+          <span class="msg-time">${timeStr} ${readTick}</span>
+        </div>`;
+    } else {
+      content = `
+        <div class="msg-bubble">
+          ${msg.message}
+          <span class="msg-time">${timeStr} ${readTick}</span>
+        </div>`;
+    }
+
+    html += `
+      <div class="${rowClass}">
+        <div class="${avClass}">${avText}</div>
+        ${content}
+      </div>`;
+  });
+
+  area.innerHTML = html;
+  scrollToBottom();
+}
+
+// ── Send a text message ──
+async function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if (!text || !activeChatId) return;
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+
+  // Optimistic UI — add bubble immediately
+  appendOptimisticMessage(text);
+  input.value = '';
+  input.style.height = 'auto';
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/chat/${activeChatId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('lawconnect_token')}`
+      },
+      body: JSON.stringify({ message: text })
+    });
+    if (!res.ok) throw new Error('Send failed');
+    // Reload to get server-confirmed message with ID
+    await loadMessages(activeChatId);
+  } catch (e) {
+    showToast('Failed to send message. Please try again.', true);
+  }
+
+  btn.disabled = false;
+}
+
+// ── Optimistic bubble (shows instantly before server confirms) ──
+function appendOptimisticMessage(text) {
+  const area = document.getElementById('messagesArea');
+  const now  = new Date();
+  const timeStr = now.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
+  const div  = document.createElement('div');
+  div.className = 'msg-row sent optimistic';
+  div.innerHTML = `
+    <div class="msg-avatar-small lawyer-av">${lawyerInitials}</div>
+    <div class="msg-bubble">
+      ${text}
+      <span class="msg-time">${timeStr} <span style="opacity:.5;">sending…</span></span>
+    </div>`;
+  area.appendChild(div);
+  scrollToBottom();
+}
+
+// ── Send file ──
+async function sendFile(input) {
+  if (!input.files[0] || !activeChatId) return;
+  const file     = input.files[0];
+  const formData = new FormData();
+  formData.append('file', file);
+
+  showToast('Uploading file…');
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/chat/${activeChatId}/messages/file`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${localStorage.getItem('lawconnect_token')}` },
+      body: formData
+    });
+    if (!res.ok) throw new Error('Upload failed');
+    showToast('File sent!');
+    await loadMessages(activeChatId);
+  } catch (e) {
+    showToast('Failed to send file.', true);
+  }
+
+  input.value = '';
+}
+
+// ── Mark as read ──
+async function markRead(chatId) {
+  const id = chatId || activeChatId;
+  if (!id) return;
+  try {
+    await fetch(`${API_BASE_URL}/chat/${id}/read`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${localStorage.getItem('lawconnect_token')}` }
+    });
+    // Update local unread count
+    const chat = allChats.find(c => c._id === id);
+    if (chat) chat.unreadCount.lawyer = 0;
+    renderConvList(allChats);
+    updateUnreadBadge();
+  } catch (e) { /* silent */ }
+}
+
+// ── Close/archive chat ──
+async function closeChat() {
+  if (!activeChatId) return;
+  if (!confirm('Archive this conversation? The client won\'t be able to message you anymore.')) return;
+  try {
+    const res = await fetch(`${API_BASE_URL}/chat/${activeChatId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('lawconnect_token')}` }
+    });
+    if (!res.ok) throw new Error();
+    showToast('Conversation archived.');
+    activeChatId   = null;
+    activeChatData = null;
+    document.getElementById('activeChatView').style.display = 'none';
+    document.getElementById('noChatSelected').style.display = 'flex';
+    stopPolling();
+    await loadChats();
+  } catch (e) {
+    showToast('Could not archive conversation.', true);
+  }
+}
+
+// ── Enter key to send (Shift+Enter for newline) ──
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+// ── Polling — re-fetches messages every 5 seconds for live updates ──
+// (Socket.io is available on the backend but requires socket.io-client CDN;
+//  polling is simpler and works without any extra setup)
+function startPolling(chatId) {
+  stopPolling();
+  pollingTimer = setInterval(async () => {
+    if (activeChatId === chatId) {
+      await loadMessages(chatId);
+    }
+  }, 5000);
+}
+function stopPolling() {
+  if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null; }
+}
+
+// ── Init ──
+async function init() {
+  await loadProfile();
+  await loadChats();
+}
+
+init();
+</script>
+</body>
+</html>

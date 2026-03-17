@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Connect – Lawyer Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --white: #fafafa;
+    --purple: #D4A80C;
+    --purple-mid: #F5C518;
+    --purple-light: #ffe080;
+    --purple-pale: #FDF3C0;
+    --grey: #6b7280;
+    --border: #e8e3d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--ink); min-height: 100vh; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 68px;
+    background: rgba(250,250,250,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--purple); letter-spacing: -0.5px; text-decoration: none; }
+  .nav-logo span { color: var(--ink); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--grey); font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--purple); }
+  .nav-right { display: flex; gap: 0.75rem; align-items: center; }
+  .btn-ghost { padding: 0.5rem 1.25rem; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--ink); font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all .2s; display: inline-block; }
+  .btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
+  .btn-primary { padding: 0.5rem 1.25rem; border: none; border-radius: 8px; background: var(--purple); color: #0d0d0d; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: background .2s; display: inline-block; }
+  .btn-primary:hover { background: var(--purple-mid); }
+
+  .hero {
+    padding: 6rem 2.5rem 4rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--purple-pale); color: #9B7A00; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 1.5rem; }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--purple); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem, 4vw, 3.5rem); font-weight: 900; line-height: 1.1; letter-spacing: -1px; margin-bottom: 1.25rem; }
+  h1 em { font-style: italic; color: var(--purple); }
+  .hero-sub { font-size: 1.05rem; color: var(--grey); line-height: 1.7; margin-bottom: 2rem; }
+  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-large { padding: 0.85rem 2rem; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all .25s; display: inline-block; }
+  .btn-large.primary { background: var(--purple); color: #0d0d0d; border: none; box-shadow: 0 8px 24px rgba(212,168,12,.3); }
+  .btn-large.primary:hover { background: var(--purple-mid); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,168,12,.4); }
+  .btn-large.outline { background: transparent; color: var(--ink); border: 2px solid var(--border); }
+  .btn-large.outline:hover { border-color: var(--purple); color: var(--purple); }
+
+  .hero-card { background: var(--ink); color: var(--white); border-radius: 20px; padding: 2.5rem; position: relative; overflow: hidden; }
+  .hero-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(212,168,12,.5) 0%, transparent 70%); }
+  .hero-card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 2rem; color: var(--purple-light); }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--purple-mid); }
+  .stat-label { font-size: 0.8rem; color: #9ca3af; margin-top: 0.2rem; }
+  .availability-bar { background: rgba(255,255,255,.1); border-radius: 8px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+  .avail-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; animation: pulse 2s infinite; }
+  .avail-text { font-size: 0.85rem; color: #d1d5db; }
+  .avail-time { font-size: 0.85rem; font-weight: 600; color: var(--purple-light); }
+
+  section.inner { padding: 5rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+  .section-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--purple); margin-bottom: 0.75rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 0.5rem; }
+  .section-sub { color: var(--grey); font-size: 0.95rem; margin-bottom: 3rem; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .step-card { padding: 2rem; border: 1.5px solid var(--border); border-radius: 16px; transition: border-color .25s, box-shadow .25s; }
+  .step-card:hover { border-color: var(--purple-light); box-shadow: 0 8px 32px rgba(212,168,12,.12); }
+  .step-num { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--purple-pale); line-height: 1; margin-bottom: 1rem; }
+  .step-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .step-card p { font-size: 0.88rem; color: var(--grey); line-height: 1.65; }
+
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .feature { padding: 1.75rem 2rem; border-radius: 14px; border: 1.5px solid var(--border); display: flex; gap: 1.25rem; align-items: flex-start; transition: all .25s; }
+  .feature:hover { border-color: var(--purple-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,168,12,.1); }
+  .feature-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--purple-pale); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
+  .feature h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.35rem; }
+  .feature p { font-size: 0.85rem; color: var(--grey); line-height: 1.5; }
+
+  .cta-banner { background: var(--ink); border-radius: 24px; padding: 4rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; position: relative; overflow: hidden; }
+  .cta-banner::before { content: ''; position: absolute; left: -60px; top: -60px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(212,168,12,.4) 0%, transparent 60%); }
+  .cta-content h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--white); margin-bottom: 0.5rem; }
+  .cta-content p { color: #9ca3af; font-size: 0.95rem; }
+
+  footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; text-align: center; color: var(--grey); font-size: 0.85rem; }
+  footer a { color: var(--purple); text-decoration: none; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; }
+    .features { grid-template-columns: 1fr; }
+    .cta-banner { flex-direction: column; text-align: center; }
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="lawyer-home.html">Law<span>Connect</span></a>
+  <div class="nav-links">
+    <a href="lawyer-home.html" class="active">Home</a>
+    <a href="lawyer-dashboard.html">Dashboard</a>
+    <a href="lawyer-appointments.html">Appointments</a>
+    <a href="lawyer-profile.html">Profile</a>
+    <a href="messages.html">Messages</a>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="btn-ghost" id="navLogin">Log In</a>
+    <a href="signup-lawyer.html" class="btn-primary" id="navSignup">Join as Lawyer</a>
+    <a href="lawyer-dashboard.html" id="navAvatar" style="display:none;width:34px;height:34px;border-radius:50%;background:var(--purple);color:#0d0d0d;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;cursor:pointer;text-decoration:none;">?</a>
+  </div>
+</nav>
+
+<main>
+  <div class="hero">
+    <div>
+      <div class="hero-badge">For Legal Professionals</div>
+      <h1>Turn free time into <em>structured earnings</em></h1>
+      <p class="hero-sub">Law Connect lets you publish your availability, manage bookings, and consult clients without the back-and-forth. Like eChannelling — but built for Sri Lankan lawyers.</p>
+      <div class="hero-ctas">
+        <a href="signup-lawyer.html" class="btn-large primary">Get Started Free</a>
+        <a href="lawyer-dashboard.html" class="btn-large outline">View Dashboard</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-title">Your Practice at a Glance</div>
+      <div class="stat-grid">
+        <div><div class="stat-num" id="statConsult">24</div><div class="stat-label">Consultations this month</div></div>
+        <div><div class="stat-num" id="statEarnings">48K</div><div class="stat-label">LKR earned via app</div></div>
+        <div><div class="stat-num" id="statRating">4.9★</div><div class="stat-label">Average rating</div></div>
+        <div><div class="stat-num" id="statPending">3</div><div class="stat-label">Upcoming today</div></div>
+      </div>
+      <div class="availability-bar">
+        <div style="display:flex;align-items:center;gap:.6rem;"><div class="avail-dot"></div><span class="avail-text">Available Now</span></div>
+        <span class="avail-time">Next slot: 3:00 PM</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="inner">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Three steps to a better practice</h2>
+    <p class="section-sub">Set up once. Let bookings come to you.</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3>Create & Verify Your Profile</h3>
+        <p>Submit your Bar Association ID and specialisations. We verify you so clients trust who they're booking.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3>Publish Your Availability</h3>
+        <p>Set time slots on your weekly calendar — mornings, evenings, gaps between court sessions. You stay in control.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3>Consult & Get Paid</h3>
+        <p>Clients book your slots, payments flow through the platform. No chasing invoices, no scheduling chaos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="inner" style="padding-top:0">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Everything you need, nothing you don't</h2>
+    <p class="section-sub">Designed around how Sri Lankan lawyers actually work.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📅</div>
+        <div><h3>Smart Schedule Management</h3><p>Weekly calendar view. Mark available slots, block court-heavy days, and adjust in seconds from any device.</p></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💬</div>
+        <div><h3>Secure Messaging</h3><p>Communicate with clients through encrypted in-app messages before and after consultations.</p></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div><h3>Earnings Dashboard</h3><p>Track monthly income, peak consultation hours, and booking trends at a glance.</p></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div><h3>Verified Professional Badge</h3><p>Bar Association verification gives clients confidence. Your credibility, displayed clearly on your profile.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="inner" style="padding-top:0">
+    <div class="cta-banner">
+      <div class="cta-content" style="position:relative;z-index:1;">
+        <h2>Ready to modernise your practice?</h2>
+        <p>Join Sri Lankan lawyers already managing their time smarter with Law Connect.</p>
+      </div>
+      <a href="signup-lawyer.html" class="btn-large primary" style="white-space:nowrap;flex-shrink:0;position:relative;z-index:1;">Register Now →</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 Law Connect · Built for Sri Lankan Legal Professionals · <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Bar Association Guidelines</a>
+</footer>
+
+<script src="api-config.js"></script>
+<script>
+const token = localStorage.getItem('lawconnect_token');
+const user  = JSON.parse(localStorage.getItem('lawconnect_user') || '{}');
+
+if (token && user.firstName) {
+  // Derive initials
+  const ini = ((user.firstName||'')[0] + (user.lastName||'')[0]).toUpperCase() || '?';
+
+  // Swap nav: hide Log In / Join, show avatar
+  document.getElementById('navLogin').style.display  = 'none';
+  document.getElementById('navSignup').style.display = 'none';
+  const av = document.getElementById('navAvatar');
+  av.style.display = 'flex';
+  av.textContent   = ini;
+
+  // Swap hero CTAs
+  const ctaPrimary = document.querySelector('.hero-ctas .btn-large.primary');
+  if (ctaPrimary) { ctaPrimary.textContent = 'Go to Dashboard'; ctaPrimary.href = 'lawyer-dashboard.html'; }
+  const ctaOutline = document.querySelector('.hero-ctas .btn-large.outline');
+  if (ctaOutline) { ctaOutline.textContent = 'My Appointments'; ctaOutline.href = 'lawyer-appointments.html'; }
+
+  // Swap bottom CTA banner button
+  const ctaBanner = document.querySelector('.cta-banner .btn-large.primary');
+  if (ctaBanner) { ctaBanner.textContent = 'Go to Dashboard →'; ctaBanner.href = 'lawyer-dashboard.html'; }
+
+  // Load real stats into the hero card
+  loadStats();
+}
+
+async function loadStats() {
+  try {
+    const { stats } = await API.lawyers.getDashboardStats();
+    const s = stats || {};
+
+    const earnings = s.monthlyRevenue >= 1000
+      ? Math.round(s.monthlyRevenue / 1000) + 'K'
+      : (s.monthlyRevenue || 0).toString();
+
+    el('statConsult',  s.totalAppointments || '0');
+    el('statEarnings', earnings);
+
+    const { lawyer } = await API.auth.getMe();
+    el('statRating',  lawyer.averageRating ? lawyer.averageRating.toFixed(1) + '★' : '—');
+    el('statPending', s.pendingAppointments || '0');
+
+    const vStatus = lawyer.verificationStatus || 'pending';
+    const dot  = document.querySelector('.avail-dot');
+    const txt  = document.querySelector('.avail-text');
+    const time = document.querySelector('.avail-time');
+    if (vStatus === 'verified') {
+      dot.style.background  = '#22c55e';
+      dot.style.boxShadow   = '0 0 8px #22c55e';
+      txt.textContent  = 'Profile Active';
+      time.textContent = lawyer.isAvailable ? 'Accepting bookings' : 'Currently unavailable';
+    } else {
+      dot.style.background = '#f59e0b';
+      dot.style.boxShadow  = '0 0 8px #f59e0b';
+      txt.textContent  = 'Pending Verification';
+      time.textContent = '24–48 hrs for approval';
+    }
+  } catch (e) { /* backend down — keep placeholders */ }
+}
+
+function el(id, val) {
+  const node = document.getElementById(id);
+  if (node) node.textContent = val;
+}
+</script>
+
+</body>
+</html>
