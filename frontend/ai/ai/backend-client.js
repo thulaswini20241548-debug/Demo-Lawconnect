@@ -5,7 +5,9 @@
 
 const BackendClient = (() => {
 
-  const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:5000'
+  : 'https://demo-lawconnect.onrender.com'; 
 
   let _history = [];
 
@@ -22,7 +24,7 @@ const BackendClient = (() => {
   return {
 
     async send(userMessage) {
-      const data = await _request('/api/chat', {
+      const data = await _request('/api/ai/chat', {
         method: 'POST',
         body: JSON.stringify({ message: userMessage, history: _history }),
       });
@@ -40,7 +42,7 @@ const BackendClient = (() => {
     },
 
     async analyseDocument(documentText, filename) {
-      const data = await _request('/api/chat/analyse', {
+      const data = await _request('/api/ai/analyse',  {
         method: 'POST',
         body: JSON.stringify({ documentText, filename }),
       });

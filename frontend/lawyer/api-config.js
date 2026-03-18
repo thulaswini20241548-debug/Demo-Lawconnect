@@ -1,7 +1,9 @@
 // API Configuration for LawConnect Frontend
 // This file handles all API calls to the backend
 
-const API_BASE_URL = 'https://demo-lawconnect.onrender.com/api';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api'
+  : 'https://demo-lawconnect.onrender.com/api';
 
 // Helper function to get auth token
 function getAuthToken() {
