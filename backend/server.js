@@ -56,6 +56,7 @@ app.use('/api/ai/analyse',        aiAnalyse);
 app.use('/api/ai/wizard',         aiWizard);
 app.use('/api/ai/practice-areas', aiPractice);
 app.use('/api/ai/health',         aiHealth);
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // ── 404 Handler ─────────────────────────────────────────────
 app.use((req, res) => {
