@@ -102,25 +102,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error.' });
 });
 
-/* ══════════════════════════════════════
-   START
-══════════════════════════════════════ */
-app.listen(PORT, () => {
-  console.log('');
-  console.log('  ⚖  LawConnect API v2.0.0');
-  console.log(`  🚀  Listening on port ${PORT}`);
-  console.log(`  🔑  GROQ_API_KEY: ${process.env.GROQ_API_KEY ? '✅ loaded' : '❌ missing — add it to .env'}`);
-  console.log(`  🌍  CORS origin:  ${allowedOrigin}`);
-  console.log(`  🛠   NODE_ENV:     ${process.env.NODE_ENV || 'development'}`);
-  console.log('');
-  console.log('  Endpoints:');
-  console.log('    GET  /health');
-  console.log('    POST /api/chat');
-  console.log('    POST /api/analyse');
-  console.log('    POST /api/wizard');
-  console.log('    GET  /api/practice-areas');
-  console.log('    POST /api/practice-areas/explain');
-  console.log('');
-});
+
 
 module.exports = app;   // exported for testing
