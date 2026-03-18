@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Connect – Appointments</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d; --white: #fafafa; --purple: #D4A80C; --purple-mid: #F5C518;
+    --purple-light: #ffe080; --purple-pale: #FDF3C0; --grey: #6b7280; --border: #e8e3d0;
+    --success: #22c55e; --warning: #f59e0b; --danger: #ef4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #faf8f0; color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 68px;
+    background: rgba(250,250,250,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--purple); text-decoration: none; }
+  .nav-logo span { color: var(--ink); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--grey); font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--purple); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--purple); color: #0d0d0d; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+
+  .layout { display: flex; flex: 1; }
+  .sidebar { width: 240px; flex-shrink: 0; background: var(--white); border-right: 1px solid var(--border); padding: 2rem 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .sidebar-section { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey); padding: 0.75rem 0.75rem 0.4rem; }
+  .sidebar-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-radius: 8px; text-decoration: none; color: var(--grey); font-size: 0.9rem; font-weight: 500; transition: all .2s; cursor: pointer; }
+  .sidebar-item:hover { background: var(--purple-pale); color: var(--purple); }
+  .sidebar-item.active { background: var(--purple-pale); color: var(--purple); font-weight: 600; }
+  .sidebar-item .icon { font-size: 1.1rem; }
+  .badge { margin-left: auto; background: var(--purple); color: #0d0d0d; font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 50px; }
+
+  .content { flex: 1; padding: 2.5rem; overflow-y: auto; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 900; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--grey); font-size: 0.9rem; }
+
+  .btn-primary { padding: 0.6rem 1.5rem; border: none; border-radius: 8px; background: var(--purple); color: #0d0d0d; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: background .2s; display: inline-block; }
+  .btn-primary:hover { background: var(--purple-mid); }
+  .btn-ghost { padding: 0.6rem 1.25rem; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--ink); font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all .2s; display: inline-block; }
+  .btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
+  .btn-danger { padding: 0.5rem 1rem; border: none; border-radius: 8px; background: #fef2f2; color: var(--danger); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .btn-danger:hover { background: #fee2e2; }
+  .btn-small { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 0.35rem; width: fit-content; }
+  .tab { padding: 0.5rem 1.25rem; border-radius: 7px; font-size: 0.875rem; font-weight: 500; cursor: pointer; color: var(--grey); transition: all .2s; border: none; background: transparent; }
+  .tab.active { background: var(--purple); color: #0d0d0d; font-weight: 600; }
+  .tab:hover:not(.active) { background: var(--purple-pale); color: var(--purple); }
+
+  .filters { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+  .filter-select { padding: 0.5rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.875rem; background: var(--white); color: var(--ink); font-family: 'DM Sans', sans-serif; cursor: pointer; outline: none; }
+  .filter-select:focus { border-color: var(--purple); }
+  .search-box { display: flex; align-items: center; gap: 0.5rem; border: 1.5px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; background: var(--white); flex: 1; max-width: 280px; }
+  .search-box input { border: none; outline: none; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; background: transparent; width: 100%; }
+
+  .appt-list { display: flex; flex-direction: column; gap: 1rem; }
+  .appt-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1.25rem; transition: box-shadow .2s; }
+  .appt-card:hover { box-shadow: 0 4px 20px rgba(212,168,12,.1); }
+  .appt-card.today { border-left: 4px solid var(--purple); }
+  .appt-avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--purple-pale); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; color: #9B7A00; flex-shrink: 0; }
+  .appt-main { flex: 1; }
+  .appt-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .appt-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+  .appt-meta span { font-size: 0.8rem; color: var(--grey); }
+  .chip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.2rem 0.65rem; border-radius: 50px; font-size: 0.73rem; font-weight: 600; }
+  .chip.online { background: #dbeafe; color: #1d4ed8; }
+  .chip.inperson { background: #fef3c7; color: #d97706; }
+  .chip.confirmed { background: #dcfce7; color: #16a34a; }
+  .chip.pending { background: #fef3c7; color: #d97706; }
+  .chip.cancelled { background: #fef2f2; color: var(--danger); }
+  .chip.completed { background: #f3f4f6; color: #6b7280; }
+  .appt-time-block { text-align: right; flex-shrink: 0; }
+  .appt-time-main { font-weight: 700; font-size: 1rem; }
+  .appt-time-sub { font-size: 0.8rem; color: var(--grey); margin-top: 0.1rem; }
+  .appt-duration { font-size: 0.75rem; color: #9B7A00; font-weight: 600; background: var(--purple-pale); padding: 0.15rem 0.5rem; border-radius: 4px; margin-top: 0.3rem; display: inline-block; }
+  .appt-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--white); border-radius: 20px; padding: 2.5rem; width: 480px; max-width: 95vw; transform: translateY(20px); transition: transform .25s; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; margin-bottom: 0.4rem; }
+  .modal-sub { color: var(--grey); font-size: 0.875rem; margin-bottom: 1.75rem; }
+  .form-row { margin-bottom: 1.25rem; }
+  .form-label { display: block; font-size: 0.83rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--ink); }
+  .form-input, .form-select { width: 100%; padding: 0.65rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; background: var(--white); outline: none; transition: border-color .2s; }
+  .form-input:focus, .form-select:focus { border-color: var(--purple); }
+  .form-row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--grey); }
+  .empty-state .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .empty-state p { font-size: 0.9rem; }
+
+  @media (max-width: 900px) { .sidebar { display: none; } }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="lawyer-home.html">Law<span>Connect</span></a>
+  <div class="nav-links">
+    <a href="lawyer-home.html">Home</a>
+    <a href="lawyer-dashboard.html">Dashboard</a>
+    <a href="lawyer-appointments.html" class="active">Appointments</a>
+    <a href="lawyer-profile.html">Profile</a>
+    <a href="messages.html">Messages</a>
+  </div>
+  <div class="avatar" id="navAvatar">–</div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-item" href="lawyer-dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="sidebar-item active" href="lawyer-appointments.html"><span class="icon">📅</span> Appointments</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-item" href="lawyer-profile.html"><span class="icon">👤</span> My Profile</a>
+    <a class="sidebar-item" href="lawyer-settings.html"><span class="icon">⚙️</span> Settings</a>
+    <a class="sidebar-item" onclick="logout()" style="cursor:pointer;"><span class="icon">🚪</span> Log Out</a>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Appointments</div>
+        <div class="page-sub">Manage your consultation schedule</div>
+      </div>
+      <div style="display:flex;gap:.75rem;">
+        <button class="btn-ghost" onclick="document.getElementById('slotModal').classList.add('open')">+ Add Slot</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'all')">All</button>
+      <button class="tab" onclick="switchTab(this,'pending')">Pending</button>
+      <button class="tab" onclick="switchTab(this,'confirmed')">Confirmed</button>
+      <button class="tab" onclick="switchTab(this,'completed')">Completed</button>
+    </div>
+
+    <div class="filters">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" placeholder="Search client name…" oninput="filterAppointments()">
+      </div>
+      <select class="filter-select" id="typeFilter" onchange="filterAppointments()">
+        <option value="all">All Types</option>
+        <option value="online">Online</option>
+        <option value="in-person">In-person</option>
+      </select>
+    </div>
+
+    <div class="appt-list" id="apptList">
+      <div class="empty-state"><div class="emoji">📅</div><p>Loading appointments…</p></div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD SLOT MODAL -->
+<div class="modal-overlay" id="slotModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-title">Add Available Slot</div>
+    <div class="modal-sub">Publish a new time slot for client bookings</div>
+    <div class="form-row">
+      <label class="form-label">Date</label>
+      <input class="form-input" type="date" id="slotDate">
+    </div>
+    <div class="form-row form-row-inline">
+      <div>
+        <label class="form-label">Start Time</label>
+        <input class="form-input" type="time" id="slotTime">
+      </div>
+      <div>
+        <label class="form-label">Duration</label>
+        <select class="form-select" id="slotDuration">
+          <option value="30">30 minutes</option>
+          <option value="60">60 minutes</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Consultation Mode</label>
+      <select class="form-select" id="slotMode">
+        <option value="online">Online (Video Call)</option>
+        <option value="in-person">In-person (Office)</option>
+        <option value="either">Either</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="document.getElementById('slotModal').classList.remove('open')">Cancel</button>
+      <button class="btn-primary" onclick="publishSlot()">Publish Slot</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL MODAL -->
+<div class="modal-overlay" id="cancelModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-title">Cancel Appointment</div>
+    <div class="modal-sub">Please provide a reason for cancellation.</div>
+    <div class="form-row">
+      <label class="form-label">Reason</label>
+      <input class="form-input" type="text" id="cancelReason" placeholder="e.g. Scheduling conflict">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="document.getElementById('cancelModal').classList.remove('open')">Back</button>
+      <button class="btn-danger" onclick="confirmCancel()">Cancel Appointment</button>
+    </div>
+  </div>
+</div>
+
+<script src="api-config.js"></script>
+<script>
+if (!localStorage.getItem('lawconnect_token')) window.location.href = 'login.html';
+
+let allAppointments = [];
+let currentTab = 'all';
+let cancelTargetId = null;
+
+function getInitials(firstName, lastName) {
+  return ((firstName || '')[0] + (lastName || '')[0]).toUpperCase() || '?';
+}
+
+function formatDateTime(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return {
+    time: d.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' }),
+    date: d.toLocaleDateString('en-LK', { day: 'numeric', month: 'short' })
+  };
+}
+
+function isToday(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return d.toDateString() === now.toDateString();
+}
+
+function renderCard(appt) {
+  const clientName = appt.client
+    ? `${appt.client.firstName || ''} ${appt.client.lastName || ''}`.trim()
+    : 'Client';
+  const initials = appt.client ? getInitials(appt.client.firstName, appt.client.lastName) : '?';
+  const dt = formatDateTime(appt.appointmentDate);
+  const typeClass = (appt.consultationType || '').toLowerCase().includes('online') ? 'online' : 'inperson';
+  const statusClass = appt.status || 'pending';
+  const todayClass = isToday(appt.appointmentDate) ? ' today' : '';
+
+  let actions = '';
+  if (appt.status === 'pending') {
+    actions = `
+      <button class="btn-primary btn-small" onclick="confirmAppt('${appt._id}')">Accept</button>
+      <button class="btn-danger" onclick="openCancel('${appt._id}')">Decline</button>
+    `;
+  } else if (appt.status === 'confirmed') {
+    actions = `
+      <button class="btn-ghost btn-small">Reschedule</button>
+      <button class="btn-danger" onclick="openCancel('${appt._id}')">Cancel</button>
+    `;
+  }
+
+  return `
+    <div class="appt-card${todayClass}" data-status="${appt.status}" data-type="${(appt.consultationType||'').toLowerCase()}" data-name="${clientName.toLowerCase()}">
+      <div class="appt-avatar">${initials}</div>
+      <div class="appt-main">
+        <div class="appt-name">${clientName}</div>
+        <div class="appt-meta">
+          <span>${appt.specialization || 'Consultation'}</span>
+          <span class="chip ${typeClass}">${appt.consultationType || 'Online'}</span>
+          <span class="chip ${statusClass}">${appt.status || 'Pending'}</span>
+        </div>
+      </div>
+      <div class="appt-time-block">
+        <div class="appt-time-main">${dt.time}</div>
+        <div class="appt-time-sub">${dt.date}</div>
+        ${appt.duration ? `<div class="appt-duration">${appt.duration} min</div>` : ''}
+      </div>
+      <div class="appt-actions">${actions}</div>
+    </div>
+  `;
+}
+
+function filterAppointments() {
+  const search = (document.getElementById('searchInput').value || '').toLowerCase();
+  const type = document.getElementById('typeFilter').value;
+  const list = document.getElementById('apptList');
+  const cards = list.querySelectorAll('.appt-card');
+
+  cards.forEach(card => {
+    const matchTab = currentTab === 'all' || card.dataset.status === currentTab;
+    const matchType = type === 'all' || card.dataset.type.includes(type.replace('-', ''));
+    const matchSearch = !search || card.dataset.name.includes(search);
+    card.style.display = (matchTab && matchType && matchSearch) ? 'flex' : 'none';
+  });
+
+  // Show empty state if all hidden
+  const visible = [...cards].filter(c => c.style.display !== 'none').length;
+  let empty = list.querySelector('.empty-state');
+  if (visible === 0) {
+    if (!empty) {
+      empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.innerHTML = '<div class="emoji">📭</div><p>No appointments match your filter.</p>';
+      list.appendChild(empty);
+    }
+    empty.style.display = 'block';
+  } else if (empty) {
+    empty.style.display = 'none';
+  }
+}
+
+function switchTab(btn, tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = tab;
+  filterAppointments();
+}
+
+async function confirmAppt(id) {
+  try {
+    await API.appointments.confirm(id);
+    await loadAppointments();
+  } catch (e) {
+    alert('Failed to confirm: ' + e.message);
+  }
+}
+
+function openCancel(id) {
+  cancelTargetId = id;
+  document.getElementById('cancelReason').value = '';
+  document.getElementById('cancelModal').classList.add('open');
+}
+
+async function confirmCancel() {
+  const reason = document.getElementById('cancelReason').value.trim();
+  try {
+    await API.appointments.cancel(cancelTargetId, reason || 'Cancelled by lawyer');
+    document.getElementById('cancelModal').classList.remove('open');
+    await loadAppointments();
+  } catch (e) {
+    alert('Failed to cancel: ' + e.message);
+  }
+}
+
+async function publishSlot() {
+  const date = document.getElementById('slotDate').value;
+  const time = document.getElementById('slotTime').value;
+  if (!date || !time) { alert('Please select a date and time.'); return; }
+
+  const availabilityData = {
+    slots: [{ date, startTime: time, duration: parseInt(document.getElementById('slotDuration').value), mode: document.getElementById('slotMode').value }]
+  };
+
+  try {
+    await API.availability.update(availabilityData);
+    document.getElementById('slotModal').classList.remove('open');
+    alert('Slot published successfully!');
+  } catch (e) {
+    alert('Failed to publish slot: ' + e.message);
+  }
+}
+
+async function loadAppointments() {
+  try {
+    const data = await API.appointments.getAll();
+    allAppointments = data.appointments || [];
+    const list = document.getElementById('apptList');
+
+    if (allAppointments.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="emoji">📅</div><p>No appointments yet. Add availability to start receiving bookings.</p></div>';
+      return;
+    }
+
+    list.innerHTML = allAppointments.map(renderCard).join('');
+    filterAppointments();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('apptList').innerHTML =
+      '<div class="empty-state"><div class="emoji">⚠️</div><p>Could not load appointments. ' + e.message + '</p></div>';
+  }
+}
+
+async function initPage() {
+  try {
+    const profile = await API.auth.getMe();
+    const l = profile.lawyer;
+    const initials = ((l.firstName || '')[0] + (l.lastName || '')[0]).toUpperCase();
+    document.getElementById('navAvatar').textContent = initials || '–';
+  } catch (e) { /* silent */ }
+
+  // Set default slot date to today
+  document.getElementById('slotDate').value = new Date().toISOString().split('T')[0];
+  await loadAppointments();
+}
+
+async function logout() {
+  if (!confirm('Are you sure you want to log out?')) return;
+  try { await API.auth.logout(); } catch (e) { /* already cleared */ }
+  window.location.href = 'login.html';
+}
+
+initPage();
+</script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Connect – Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d; --white: #fafafa; --purple: #D4A80C; --purple-mid: #F5C518;
+    --purple-light: #ffe080; --purple-pale: #FDF3C0; --grey: #6b7280; --border: #e8e3d0;
+    --danger: #ef4444; --success: #22c55e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #faf8f0; color: var(--ink); min-height: 100vh; }
+
+  /* ── LAYOUT ── */
+  .page-wrap {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    background: var(--ink);
+    padding: 3rem 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .left-panel::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 450px; height: 450px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,168,12,.45) 0%, transparent 65%);
+  }
+  .left-panel::after {
+    content: '';
+    position: absolute; bottom: -80px; left: -60px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,197,24,.25) 0%, transparent 65%);
+  }
+  .panel-inner { position: relative; z-index: 1; }
+
+  .panel-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--white); margin-bottom: 3.5rem;
+  }
+  .panel-logo span { color: var(--purple-light); }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem; font-weight: 900;
+    color: var(--white); line-height: 1.12;
+    margin-bottom: 1.25rem;
+  }
+  .panel-title em { font-style: italic; color: var(--purple-light); }
+
+  .panel-sub {
+    color: #9ca3af; font-size: 0.95rem;
+    line-height: 1.75; margin-bottom: 3rem;
+  }
+
+  /* Stats row */
+  .stat-row {
+    display: flex; gap: 2.5rem; margin-bottom: 3rem;
+  }
+  .stat-item {}
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 900;
+    color: var(--purple-light);
+  }
+  .stat-label { font-size: 0.78rem; color: #9ca3af; margin-top: 0.1rem; }
+
+  /* Testimonial */
+  .panel-testimonial {
+    padding: 1.5rem;
+    background: rgba(255,255,255,.06);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .testi-quote {
+    color: #d1d5db; font-size: 0.9rem;
+    line-height: 1.65; font-style: italic;
+    margin-bottom: 0.9rem;
+  }
+  .testi-author { font-size: 0.78rem; color: var(--purple-light); font-weight: 600; }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+  }
+  .form-box { width: 100%; max-width: 420px; }
+
+  .form-header { margin-bottom: 2.25rem; }
+  .form-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.85rem; font-weight: 900;
+    margin-bottom: 0.4rem;
+  }
+  .form-header p { color: var(--grey); font-size: 0.9rem; }
+
+  /* Divider with OR */
+  .divider {
+    display: flex; align-items: center;
+    gap: 1rem; margin: 1.5rem 0;
+    color: var(--grey); font-size: 0.8rem;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* Form elements */
+  .form-row { margin-bottom: 1.15rem; }
+  .form-label {
+    display: block; font-size: 0.83rem;
+    font-weight: 600; margin-bottom: 0.4rem;
+    color: var(--ink);
+  }
+  .input-wrap { position: relative; }
+  .form-input {
+    width: 100%; padding: 0.72rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 9px; font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white); outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    color: var(--ink);
+  }
+  .form-input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(212,168,12,.12);
+  }
+  .form-input.error { border-color: var(--danger); }
+
+  /* Password toggle */
+  .toggle-pass {
+    position: absolute; right: 1rem; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    cursor: pointer; font-size: 1rem;
+    color: var(--grey); padding: 0;
+    transition: color .2s;
+  }
+  .toggle-pass:hover { color: var(--purple); }
+
+  .forgot-row {
+    display: flex; justify-content: flex-end;
+    margin-top: 0.35rem;
+  }
+  .forgot-link {
+    font-size: 0.8rem; color: var(--purple);
+    text-decoration: none; font-weight: 500;
+  }
+  .forgot-link:hover { text-decoration: underline; }
+
+  /* Alert */
+  .alert {
+    padding: 0.8rem 1rem; border-radius: 9px;
+    font-size: 0.875rem; margin-bottom: 1.25rem;
+    display: none; align-items: flex-start; gap: 0.6rem;
+  }
+  .alert-error {
+    background: #fef2f2; color: #dc2626;
+    border: 1.5px solid #fecaca;
+  }
+  .alert-success {
+    background: #f0fdf4; color: #16a34a;
+    border: 1.5px solid #bbf7d0;
+  }
+  .alert.visible { display: flex; }
+
+  /* Submit button */
+  .btn-submit {
+    width: 100%; padding: 0.9rem;
+    border: none; border-radius: 10px;
+    background: var(--purple); color: #0d0d0d;
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background .2s, transform .15s, opacity .2s;
+    display: flex; align-items: center;
+    justify-content: center; gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+  .btn-submit:hover:not(:disabled) {
+    background: var(--purple-mid);
+    transform: translateY(-1px);
+  }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* Spinner */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(13,13,13,.25);
+    border-top-color: #0d0d0d;
+    border-radius: 50%;
+    animation: spin .65s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-submit.loading .spinner { display: block; }
+  .btn-submit.loading .btn-text { display: none; }
+
+  /* Bottom links */
+  .bottom-link {
+    text-align: center; margin-top: 1.35rem;
+    font-size: 0.875rem; color: var(--grey);
+  }
+  .bottom-link a {
+    color: var(--purple); text-decoration: none;
+    font-weight: 600;
+  }
+  .bottom-link a:hover { text-decoration: underline; }
+
+  .divider-link {
+    text-align: center; margin-top: 0.75rem;
+    font-size: 0.8rem; color: var(--grey);
+  }
+  .divider-link a { color: var(--grey); text-decoration: underline; }
+
+  /* Verification status chip */
+  .verify-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.85rem; border-radius: 50px;
+    font-size: 0.78rem; font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+  .verify-chip.pending { background: #fef3c7; color: #d97706; }
+  .verify-chip.verified { background: #dcfce7; color: #16a34a; }
+
+  @media (max-width: 900px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    .left-panel { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ══ LEFT PANEL ══ -->
+  <div class="left-panel">
+    <div class="panel-inner">
+      <div class="panel-logo">Law<span>Connect</span></div>
+
+      <h1 class="panel-title">Good to have<br>you <em>back.</em></h1>
+      <p class="panel-sub">
+        Sri Lanka's verified legal marketplace. Sign in to manage your appointments, track earnings, and connect with clients — all in one place.
+      </p>
+
+      <div class="stat-row">
+        <div class="stat-item">
+          <div class="stat-val">500+</div>
+          <div class="stat-label">Verified Lawyers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">12k+</div>
+          <div class="stat-label">Consultations Done</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">4.8★</div>
+          <div class="stat-label">Avg. Rating</div>
+        </div>
+      </div>
+
+      <div class="panel-testimonial">
+        <div class="testi-quote">
+          "I went from zero online presence to fully booked evenings in under two weeks. Law Connect just works."
+        </div>
+        <div class="testi-author">— Kasun R., Criminal Law · Kandy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT PANEL ══ -->
+  <div class="right-panel">
+    <div class="form-box">
+
+      <div class="form-header">
+        <h2>Welcome back</h2>
+        <p>Sign in to your Law Connect lawyer account</p>
+      </div>
+
+      <!-- Alert box -->
+      <div class="alert alert-error" id="alertError">
+        <span>⚠️</span>
+        <span id="alertErrorMsg">Invalid email or password.</span>
+      </div>
+      <div class="alert alert-success" id="alertSuccess">
+        <span>✅</span>
+        <span id="alertSuccessMsg">Signed in! Redirecting…</span>
+      </div>
+
+      <!-- Email -->
+      <div class="form-row">
+        <label class="form-label" for="loginEmail">Email Address</label>
+        <div class="input-wrap">
+          <input
+            class="form-input"
+            type="email"
+            id="loginEmail"
+            placeholder="you@example.com"
+            autocomplete="email"
+          >
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-row">
+        <label class="form-label" for="loginPassword">Password</label>
+        <div class="input-wrap">
+          <input
+            class="form-input"
+            type="password"
+            id="loginPassword"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            style="padding-right:3rem;"
+          >
+          <button class="toggle-pass" type="button" onclick="togglePassword()" id="toggleBtn" title="Show/hide password">
+            👁️
+          </button>
+        </div>
+        <div class="forgot-row">
+          <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot password?</a>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-submit" id="loginBtn" onclick="handleLogin()">
+        <div class="spinner"></div>
+        <span class="btn-text">Sign In →</span>
+      </button>
+
+      <div class="bottom-link">
+        Don't have an account? <a href="signup-lawyer.html">Join as a Lawyer</a>
+      </div>
+      <div class="divider-link">
+        <a href="lawyer-home.html">← Back to home</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="api-config.js"></script>
+<script>
+// ── If already logged in, skip to dashboard ──
+if (localStorage.getItem('lawconnect_token')) {
+  window.location.replace('lawyer-dashboard.html');
+}
+
+// ── Password visibility toggle ──
+let passVisible = false;
+function togglePassword() {
+  passVisible = !passVisible;
+  const inp = document.getElementById('loginPassword');
+  const btn = document.getElementById('toggleBtn');
+  inp.type = passVisible ? 'text' : 'password';
+  btn.textContent = passVisible ? '🙈' : '👁️';
+}
+
+// ── Show / hide alerts ──
+function showError(msg) {
+  const el = document.getElementById('alertError');
+  const msgEl = document.getElementById('alertErrorMsg');
+  msgEl.textContent = msg;
+  el.classList.add('visible');
+  document.getElementById('alertSuccess').classList.remove('visible');
+  setTimeout(() => el.classList.remove('visible'), 6000);
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById('alertSuccess');
+  document.getElementById('alertSuccessMsg').textContent = msg;
+  el.classList.add('visible');
+  document.getElementById('alertError').classList.remove('visible');
+}
+
+// ── Set button loading state ──
+function setLoading(loading) {
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+
+// ── Main login handler ──
+async function handleLogin() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  // Basic client-side validation
+  if (!email || !password) {
+    showError('Please enter both your email and password.');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showError('Please enter a valid email address.');
+    document.getElementById('loginEmail').classList.add('error');
+    return;
+  }
+
+  document.getElementById('loginEmail').classList.remove('error');
+  document.getElementById('loginPassword').classList.remove('error');
+  setLoading(true);
+
+  try {
+    const response = await API.auth.login(email, password);
+
+    // Persist auth data
+    localStorage.setItem('lawconnect_token',    response.token);
+    localStorage.setItem('lawconnect_user',     JSON.stringify(response.lawyer));
+    localStorage.setItem('lawconnect_role',     'lawyer');
+    localStorage.setItem('lawconnect_loggedIn', 'true');
+
+    const status = response.lawyer.verificationStatus;
+
+    if (status === 'verified') {
+      showSuccess('Signed in successfully! Taking you to your dashboard…');
+      setTimeout(() => window.location.href = 'lawyer-dashboard.html', 1200);
+    } else if (status === 'pending') {
+      showSuccess('Signed in! Your account is still pending verification…');
+      setTimeout(() => window.location.href = 'verification-pending.html', 1400);
+    } else {
+      // rejected / other
+      showError('Your account verification was unsuccessful. Please contact verify@lawconnect.lk for support.');
+      setLoading(false);
+    }
+
+  } catch (error) {
+    console.error('Login error:', error);
+    const msg = error.message || '';
+    if (msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('credentials') || msg.toLowerCase().includes('password')) {
+      showError('Incorrect email or password. Please try again.');
+      document.getElementById('loginPassword').classList.add('error');
+    } else if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('no lawyer')) {
+      showError('No account found with that email. Would you like to register?');
+    } else {
+      showError(msg || 'Something went wrong. Please check that the backend is running and try again.');
+    }
+    setLoading(false);
+  }
+}
+
+// ── Forgot password placeholder ──
+function handleForgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) {
+    showError('Enter your email address above first, then click "Forgot password?"');
+  } else {
+    showSuccess(`A reset link will be sent to ${email} if an account exists.`);
+    // TODO: wire to API.auth.forgotPassword(email) when endpoint is added to backend
+  }
+}
+
+// ── Allow Enter key to submit ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleLogin();
+});
+</script>
+
+</body>
+</html>

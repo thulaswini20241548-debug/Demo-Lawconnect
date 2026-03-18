@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LawConnect — AI Legal Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">⚖</div>
+      <span class="nav-logo-text">Law<span>Connect</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#practice">Practice Areas</a></li>
+      <li><a href="#assistant" class="active">AI Assistant</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#assistant" class="nav-cta">Ask a Question</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-badge">AI Powered Legal Assistant</div>
+    <h1 class="hero-title">Legal Guidance,<br><em>Without Complexity.</em></h1>
+    <p class="hero-sub">
+      LawConnect democratises access to Sri Lankan legal knowledge through AI-powered assistance,
+      verified lawyer connections, and simplified legal resources.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="scrollToChat()">Ask the AI Assistant</button>
+      <button class="btn-ghost" onclick="LegalWizard.open()">⚖ Legal Situation Wizard</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item"><div class="stat-num">5+</div><div class="stat-label">Practice Areas</div></div>
+      <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label">AI Availability</div></div>
+      <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Languages Supported</div></div>
+      <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Private &amp; Secure</div></div>
+    </div>
+  </section>
+
+  <section class="practice-section" id="practice">
+    <div class="practice-inner">
+      <div class="practice-header reveal">
+        <div>
+          <div class="section-label">Areas of Law</div>
+          <h2 class="section-title">Practice Areas We<br>Cover</h2>
+        </div>
+        <p style="color:rgba(247,244,238,0.45); font-size:0.85rem; max-width:300px; line-height:1.7;">
+          Click any area to ask the AI assistant specific questions about that legal domain.
+        </p>
+      </div>
+      <div class="practice-grid reveal" id="practiceGrid"></div>
+    </div>
+  </section>
+
+  <section class="chat-section" id="assistant">
+    <div class="chat-inner">
+      <div class="chat-info reveal">
+        <div class="section-label">AI Legal Assistant</div>
+        <h2 class="section-title">Your Personal<br><em>Legal Guide</em></h2>
+        <p>
+          Trained on Sri Lankan law including the Constitution, Employment Acts, Rent Act, Consumer
+          Affairs legislation, and more — LawConnect AI answers your questions in plain language.
+        </p>
+        <ul class="feature-list">
+          <li>Understands questions in plain English about Sri Lankan law</li>
+          <li>Explains your legal rights in simple, accessible language</li>
+          <li>Covers family, employment, property, consumer &amp; criminal law</li>
+          <li>Available 24/7 with instant responses</li>
+          <li>Directs complex cases to verified lawyers</li>
+          <li>Trilingual support: English, Sinhala &amp; Tamil (coming soon)</li>
+        </ul>
+        <div class="chat-feature-btns">
+          <button class="chat-feature-btn" onclick="LegalWizard.open()">
+            <span class="cfb-icon">⚖</span><span class="cfb-label">Situation Wizard</span>
+          </button>
+          <button class="chat-feature-btn" onclick="DocumentAnalyser.open()">
+            <span class="cfb-icon">📄</span><span class="cfb-label">Analyse Document</span>
+          </button>
+          <button class="chat-feature-btn" onclick="ChatHistory.togglePanel()">
+            <span class="cfb-icon">📋</span><span class="cfb-label">Chat History</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-widget reveal">
+        <div class="chat-widget-header">
+          <div class="chat-avatar">⚖</div>
+          <div class="chat-agent-info">
+            <h4>LexAI — Legal Assistant</h4>
+            <p><span class="status-dot"></span> Online · Sri Lankan Law Expert</p>
+          </div>
+          <div class="chat-header-actions" id="chatToolbar">
+            <button class="chat-hdr-btn" onclick="DocumentAnalyser.open()" title="Analyse a document">📄</button>
+            <button class="chat-hdr-btn" onclick="ChatHistory.exportPDF()" title="Export PDF">⬇</button>
+            <button class="chat-hdr-btn" onclick="ChatHistory.togglePanel()" title="Chat history">📋</button>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-quick-replies" id="quickReplies"></div>
+
+        <div class="chat-input-area">
+          <div id="voiceStatus" class="voice-status" style="display:none"></div>
+          <div class="chat-input-row">
+            <button class="input-side-btn" onclick="LegalWizard.open()" title="Legal Situation Wizard">⚖</button>
+            <textarea
+              id="chatInput"
+              placeholder="Ask your legal question…"
+              rows="1"
+              onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMessage();}"
+              oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
+            ></textarea>
+            <button class="input-side-btn mic-btn" id="micBtn" title="Voice input" onclick="VoiceInput.toggle(this)">🎙</button>
+            <button id="sendBtn" onclick="sendMessage()">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="background: var(--ink-soft);">
+    <div class="how-section">
+      <div class="reveal" style="text-align:center; margin-bottom:1rem;">
+        <div class="section-label" style="text-align:center">Simple Process</div>
+        <h2 class="section-title" style="text-align:center;">How LawConnect Works</h2>
+      </div>
+      <div class="how-grid" id="howGrid"></div>
+      <div class="disclaimer reveal" style="margin-top:3rem;">
+        <strong>⚠ Important Disclaimer:</strong> LawConnect is an AI assistant intended for general
+        informational purposes only. Responses do not constitute formal legal advice or create an
+        attorney-client relationship. For serious legal matters, please consult a qualified legal
+        professional. Information is based on Sri Lankan law as of the AI's training data.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Law<span>Connect</span></div>
+    <p style="font-size:0.85rem; color:rgba(247,244,238,0.4); margin-top:0.5rem;">
+      Democratising access to legal knowledge in Sri Lanka
+    </p>
+    <div class="footer-text">
+      © 2026 LawConnect · SDGP Group CS-165 · Informatics Institute of Technology,
+      affiliated with the University of Westminster
+    </div>
+  </footer>
+
+  <button class="float-chat-btn" onclick="scrollToChat()" title="Ask AI Assistant">⚖</button>
+
+  <script src="data/practice-areas.js"></script>
+  <script src="data/how-it-works.js"></script>
+  <script src="data/quick-replies.js"></script>
+  <script src="data/demo-responses.js"></script>
+  <script src="ai/backend-client.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/wizard.js"></script>
+  <script src="js/analyser.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

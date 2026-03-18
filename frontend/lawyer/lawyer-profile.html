@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Law Connect – My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d; --white: #fafafa; --purple: #D4A80C; --purple-mid: #F5C518;
+    --purple-light: #ffe080; --purple-pale: #FDF3C0; --grey: #6b7280; --border: #e8e3d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #faf8f0; color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+
+  nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 2.5rem; height: 68px; background: rgba(250,250,250,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--purple); text-decoration: none; }
+  .nav-logo span { color: var(--ink); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--grey); font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--purple); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--purple); color: #0d0d0d; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+
+  .layout { display: flex; flex: 1; }
+  .sidebar { width: 240px; flex-shrink: 0; background: var(--white); border-right: 1px solid var(--border); padding: 2rem 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .sidebar-section { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey); padding: 0.75rem 0.75rem 0.4rem; }
+  .sidebar-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.75rem; border-radius: 8px; text-decoration: none; color: var(--grey); font-size: 0.9rem; font-weight: 500; transition: all .2s; cursor: pointer; }
+  .sidebar-item:hover { background: var(--purple-pale); color: var(--purple); }
+  .sidebar-item.active { background: var(--purple-pale); color: var(--purple); font-weight: 600; }
+  .sidebar-item .icon { font-size: 1.1rem; }
+  .badge { margin-left: auto; background: var(--purple); color: #0d0d0d; font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 50px; }
+
+  .content { flex: 1; padding: 2.5rem; overflow-y: auto; max-width: 900px; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 900; margin-bottom: 0.25rem; }
+  .page-sub { color: var(--grey); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  .btn-primary { padding: 0.6rem 1.5rem; border: none; border-radius: 8px; background: var(--purple); color: #0d0d0d; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: background .2s; display: inline-block; }
+  .btn-primary:hover { background: var(--purple-mid); }
+  .btn-ghost { padding: 0.6rem 1.25rem; border: 1.5px solid var(--border); border-radius: 8px; background: transparent; color: var(--ink); font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; transition: all .2s; display: inline-block; }
+  .btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
+
+  .profile-hero { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 2rem; display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 1.5rem; }
+  .profile-avatar-wrap { position: relative; flex-shrink: 0; }
+  .profile-avatar { width: 88px; height: 88px; border-radius: 50%; background: var(--purple); color: #0d0d0d; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; }
+  .profile-info { flex: 1; }
+  .profile-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 0.2rem; }
+  .profile-title { color: var(--purple); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.6rem; }
+  .profile-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tag { padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.78rem; font-weight: 600; background: var(--purple-pale); color: #9B7A00; }
+  .tag.verified { background: #dcfce7; color: #16a34a; display: flex; align-items: center; gap: 0.3rem; }
+  .profile-stats { display: flex; gap: 2rem; }
+  .profile-stat-val { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; }
+  .profile-stat-label { font-size: 0.75rem; color: var(--grey); }
+
+  .card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.75rem; margin-bottom: 1.25rem; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .card-title { font-weight: 700; font-size: 1rem; }
+  .edit-link { font-size: 0.8rem; color: var(--purple); font-weight: 500; cursor: pointer; text-decoration: none; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .form-row { margin-bottom: 0; }
+  .form-row.full { grid-column: 1 / -1; }
+  .form-label { display: block; font-size: 0.83rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--ink); }
+  .form-input, .form-select, .form-textarea { width: 100%; padding: 0.65rem 1rem; border: 1.5px solid var(--border); border-radius: 8px; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; background: var(--white); outline: none; transition: border-color .2s; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--purple); }
+  .form-textarea { resize: vertical; min-height: 90px; }
+  .form-input[readonly] { background: #faf8f0; color: var(--grey); cursor: not-allowed; }
+
+  .areas-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .area-chip { padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.82rem; font-weight: 500; border: 1.5px solid var(--border); background: var(--white); cursor: pointer; transition: all .2s; }
+  .area-chip.selected { background: var(--purple); color: #0d0d0d; border-color: var(--purple); }
+  .area-chip:hover:not(.selected) { border-color: var(--purple-light); color: var(--purple); }
+
+  .fee-info { margin-top: 1.25rem; padding: 1rem; background: var(--purple-pale); border-radius: 8px; font-size: .85rem; color: var(--grey); }
+  .fee-info strong.label { color: #9B7A00; }
+  .fee-info strong.value { color: var(--ink); }
+
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--ink); color: var(--white); padding: 0.8rem 1.5rem; border-radius: 10px; font-size: 0.875rem; font-weight: 500; z-index: 999; transform: translateY(80px); opacity: 0; transition: all .3s; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 900px) { .sidebar { display: none; } .form-grid { grid-template-columns: 1fr; } .profile-hero { flex-direction: column; } }
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="lawyer-home.html">Law<span>Connect</span></a>
+  <div class="nav-links">
+    <a href="lawyer-home.html">Home</a>
+    <a href="lawyer-dashboard.html">Dashboard</a>
+    <a href="lawyer-appointments.html">Appointments</a>
+    <a href="lawyer-profile.html" class="active">Profile</a>
+  </div>
+  <div class="avatar" id="navAvatar">–</div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-item" href="lawyer-dashboard.html"><span class="icon">📊</span> Dashboard</a>
+    <a class="sidebar-item" href="lawyer-appointments.html"><span class="icon">📅</span> Appointments</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-item active" href="lawyer-profile.html"><span class="icon">👤</span> My Profile</a>
+    <a class="sidebar-item" href="lawyer-settings.html"><span class="icon">⚙️</span> Settings</a>
+    <a class="sidebar-item" onclick="logout()" style="cursor:pointer;"><span class="icon">🚪</span> Log Out</a>
+  </aside>
+
+  <main class="content">
+    <div class="page-title">My Profile</div>
+    <p class="page-sub">How clients see you on Law Connect</p>
+
+    <!-- PROFILE HERO -->
+    <div class="profile-hero">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="heroAvatar">–</div>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name" id="heroName">Loading…</div>
+        <div class="profile-title" id="heroTitle"> </div>
+        <div class="profile-tags" id="heroTags"></div>
+        <div class="profile-stats">
+          <div><div class="profile-stat-val" id="statRating">—</div><div class="profile-stat-label">Rating</div></div>
+          <div><div class="profile-stat-val" id="statConsult">—</div><div class="profile-stat-label">Consultations</div></div>
+          <div><div class="profile-stat-val" id="statExp">—</div><div class="profile-stat-label">Yrs Experience</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONAL INFO FORM -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Personal Information</span>
+        <a class="edit-link" onclick="saveProfile()">Save Changes</a>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" id="firstName">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" id="lastName">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="email">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Phone Number</label>
+          <input class="form-input" type="tel" id="phone">
+        </div>
+        <div class="form-row">
+          <label class="form-label">City / District</label>
+          <select class="form-select" id="city">
+            <option value="">Select…</option>
+            <option>Colombo</option>
+            <option>Kandy</option>
+            <option>Galle</option>
+            <option>Jaffna</option>
+            <option>Kurunegala</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Years of Experience</label>
+          <input class="form-input" type="number" id="yearsExp" min="0">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Bar Council ID</label>
+          <input class="form-input" type="text" id="barCouncilId" readonly>
+        </div>
+        <div class="form-row">
+          <label class="form-label">License Number</label>
+          <input class="form-input" type="text" id="licenseNumber" readonly>
+        </div>
+        <div class="form-row full">
+          <label class="form-label">Short Bio (shown to clients)</label>
+          <textarea class="form-textarea" id="bio" rows="4"></textarea>
+        </div>
+        <div class="form-row">
+          <label class="form-label">Languages Spoken</label>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;padding-top:.25rem;" id="langChips">
+            <span class="area-chip lang-chip" onclick="this.classList.toggle('selected')">Sinhala</span>
+            <span class="area-chip lang-chip" onclick="this.classList.toggle('selected')">Tamil</span>
+            <span class="area-chip lang-chip" onclick="this.classList.toggle('selected')">English</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRACTICE AREAS -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Practice Areas</span>
+        <a class="edit-link" onclick="saveProfile()">Update</a>
+      </div>
+      <div class="areas-grid" id="specializationsGrid">
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Family Law</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Property Rights</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Employment Law</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Consumer Protection</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Criminal Law</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Corporate Law</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Intellectual Property</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Tax Law</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Immigration Law</span>
+        <span class="area-chip spec-chip" onclick="this.classList.toggle('selected')">Civil Litigation</span>
+      </div>
+      <p style="font-size:.78rem;color:var(--grey);margin-top:1rem;">Click to toggle. Selected areas appear in your public profile.</p>
+    </div>
+
+    <!-- FEES -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Consultation Fee</span>
+        <a class="edit-link" onclick="saveProfile()">Save</a>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">Fee per Consultation (LKR)</label>
+          <input class="form-input" type="number" id="consultationFee" min="0" step="500">
+        </div>
+      </div>
+      <div class="fee-info">
+        <strong class="label">Platform fee:</strong> Law Connect charges 8% per completed booking.
+        Net amount: <strong class="value" id="netFeeDisplay">—</strong>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;justify-content:flex-end;margin-bottom:2.5rem;">
+      <button class="btn-ghost" onclick="loadProfile()">Discard Changes</button>
+      <button class="btn-primary" onclick="saveProfile()">Save All Changes</button>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="api-config.js"></script>
+<script>
+if (!localStorage.getItem('lawconnect_token')) window.location.href = 'login.html';
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = (isError ? '❌ ' : '✅ ') + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function getInitials(first, last) {
+  return ((first || '')[0] + (last || '')[0]).toUpperCase();
+}
+
+function populateForm(lawyer) {
+  document.getElementById('heroAvatar').textContent = getInitials(lawyer.firstName, lawyer.lastName);
+  document.getElementById('navAvatar').textContent = getInitials(lawyer.firstName, lawyer.lastName);
+  document.getElementById('heroName').textContent = `${lawyer.firstName} ${lawyer.lastName}`;
+  document.getElementById('heroTitle').textContent =
+    `Attorney-at-Law${lawyer.yearsOfExperience ? ` · ${lawyer.yearsOfExperience} Years Experience` : ''}`;
+
+  // Tags
+  const tags = document.getElementById('heroTags');
+  tags.innerHTML = '';
+  if (lawyer.verificationStatus === 'verified') {
+    tags.innerHTML += `<span class="tag verified">✔ Bar Association Verified</span>`;
+  } else {
+    tags.innerHTML += `<span class="tag">⏳ Verification ${lawyer.verificationStatus || 'Pending'}</span>`;
+  }
+  if (lawyer.city) tags.innerHTML += `<span class="tag">${lawyer.city}</span>`;
+
+  // Stats
+  document.getElementById('statRating').textContent = lawyer.averageRating ? lawyer.averageRating.toFixed(1) + '★' : '—';
+  document.getElementById('statConsult').textContent = lawyer.totalConsultations || '—';
+  document.getElementById('statExp').textContent = lawyer.yearsOfExperience || '—';
+
+  // Form fields
+  document.getElementById('firstName').value = lawyer.firstName || '';
+  document.getElementById('lastName').value = lawyer.lastName || '';
+  document.getElementById('email').value = lawyer.email || '';
+  document.getElementById('phone').value = lawyer.phoneNumber || '';
+  document.getElementById('yearsExp').value = lawyer.yearsOfExperience || '';
+  document.getElementById('barCouncilId').value = lawyer.barCouncilId || '';
+  document.getElementById('licenseNumber').value = lawyer.licenseNumber || '';
+  document.getElementById('bio').value = lawyer.bio || '';
+  document.getElementById('consultationFee').value = lawyer.consultationFee || '';
+
+  // City select
+  const citySelect = document.getElementById('city');
+  for (let opt of citySelect.options) {
+    if (opt.value === lawyer.city || opt.text === lawyer.city) { opt.selected = true; break; }
+  }
+
+  // Languages
+  const langs = lawyer.languagesSpoken || [];
+  document.querySelectorAll('.lang-chip').forEach(chip => {
+    chip.classList.toggle('selected', langs.includes(chip.textContent.trim()));
+  });
+
+  // Specializations
+  const specs = lawyer.specializations || [];
+  document.querySelectorAll('.spec-chip').forEach(chip => {
+    chip.classList.toggle('selected', specs.includes(chip.textContent.trim()));
+  });
+
+  // Net fee
+  updateNetFee();
+}
+
+function updateNetFee() {
+  const fee = parseInt(document.getElementById('consultationFee').value) || 0;
+  const net = Math.round(fee * 0.92);
+  document.getElementById('netFeeDisplay').textContent = net > 0 ? `LKR ${net.toLocaleString()}` : '—';
+}
+document.addEventListener('input', e => { if (e.target.id === 'consultationFee') updateNetFee(); });
+
+async function loadProfile() {
+  try {
+    const data = await API.auth.getMe();
+    populateForm(data.lawyer);
+  } catch (e) {
+    console.error(e);
+    showToast('Failed to load profile: ' + e.message, true);
+  }
+}
+
+async function saveProfile() {
+  const specializations = [...document.querySelectorAll('.spec-chip.selected')].map(c => c.textContent.trim());
+  const languagesSpoken = [...document.querySelectorAll('.lang-chip.selected')].map(c => c.textContent.trim());
+
+  const profileData = {
+    firstName: document.getElementById('firstName').value.trim(),
+    lastName: document.getElementById('lastName').value.trim(),
+    phoneNumber: document.getElementById('phone').value.trim(),
+    city: document.getElementById('city').value,
+    district: document.getElementById('city').value,
+    yearsOfExperience: parseInt(document.getElementById('yearsExp').value) || 0,
+    bio: document.getElementById('bio').value.trim(),
+    consultationFee: parseInt(document.getElementById('consultationFee').value) || 0,
+    specializations,
+    languagesSpoken
+  };
+
+  try {
+    await API.lawyers.updateProfile(profileData);
+    showToast('Profile updated successfully!');
+    await loadProfile();
+  } catch (e) {
+    showToast('Failed to save: ' + e.message, true);
+  }
+}
+
+async function logout() {
+  if (!confirm('Are you sure you want to log out?')) return;
+  try { await API.auth.logout(); } catch (e) { /* already cleared */ }
+  window.location.href = 'login.html';
+}
+
+loadProfile();
+</script>
+</body>
+</html>
