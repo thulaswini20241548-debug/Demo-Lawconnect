@@ -780,5 +780,5 @@ async function init() {
 
 init();
 </script>
-</body>
+<button class="ai-fab" onclick="toggleAI()" title="Ask LexAI">?</button><div class="ai-panel" id="aiPanel"><iframe src="../ai/index.html" loading="lazy"></iframe></div><style>.ai-fab{position:fixed;bottom:2rem;right:2rem;z-index:999;width:56px;height:56px;border-radius:50%;background:#D4A80C;border:none;cursor:pointer;font-size:1.5rem;box-shadow:0 8px 24px rgba(212,168,12,.4);transition:transform .2s}.ai-fab:hover{transform:scale(1.1)}.ai-panel{position:fixed;bottom:6rem;right:2rem;z-index:998;width:420px;height:600px;border-radius:20px;border:1.5px solid #e8e3d0;background:#fafafa;box-shadow:0 24px 64px rgba(0,0,0,.15);display:none;flex-direction:column;overflow:hidden}.ai-panel.open{display:flex}.ai-panel iframe{width:100%;height:100%;border:none;border-radius:20px}</style><script>function toggleAI(){document.getElementById("aiPanel").classList.toggle("open")}<\/script></body>
 </html>
